@@ -115,3 +115,41 @@ classDiagram
     Sistema "1" --> "*" Curso : Gerencia
     Sistema "1" --> "*" Turma : Gerencia
     Sistema "1" --> "*" Aluno : Gerencia
+```
+
+## Estrutura de Classes
+
+A arquitetura do projeto foi dividida em grupos lógicos para facilitar o entendimento de cada responsabilidade.
+
+### Pessoas e Alunos
+
+Estas classes modelam os indivíduos que interagem ou fazem parte da instituição.
+
+- `Pessoa`: É a classe base que concentra os dados de identificação comuns a qualquer pessoa, como nome, CPF, telefone e e-mail.
+- `Aluno`: Especializa a classe Pessoa, adicionando uma matrícula única e um histórico acadêmico. Também traz a inteligência para calcular o próprio Coeficiente de Rendimento (CR) baseado nas disciplinas já cursadas.
+
+### Catálogo e Oferta Acadêmica
+
+Responsáveis por estruturar o que a instituição ensina e como isso é oferecido aos alunos em cada semestre.
+
+- `Curso`: Representa a disciplina na sua essência. Guarda a ementa, carga horária e, muito importante, a lista de pré-requisitos para ser cursada.
+- `Oferta`: Classe base que abstrai o conceito temporal de algo sendo oferecido, contendo o período, horários, local e limite de vagas.
+- `Turma`: Herda de Oferta e concretiza a oferta de um Curso específico. Ela controla o seu próprio status (aberta ou fechada), gerencia as matrículas ativas nela e possui a lógica para impedir choques de horário com outras turmas.
+
+### Vínculo Acadêmico
+
+- `Matricula`: Atua como uma classe associativa, sendo a ponte que liga um Aluno a uma Turma. É nela que a vida acadêmica acontece: guarda as notas e a frequência do aluno, atualiza o status de aprovação ou reprovação com base nas regras do sistema e gerencia a lógica de trancamento dentro do prazo legal.
+
+### Controle, Gerenciamento e Relatórios
+
+As engrenagens que fazem o sistema funcionar como um todo e persistir as informações.
+
+- `Configuracao`: Responsável por isolar as regras de negócio voláteis. Ela lê dados de um arquivo e garante que o sistema inteiro obedeça aos mesmos parâmetros de notas mínimas, prazos e limites, agindo de forma centralizada.
+- `Sistema`: É a classe principal de fachada. Ela orquestra todo o funcionamento do programa, armazenando as listas de alunos, turmas e cursos em memória. É responsável pelas rotinas de criação, pela lógica complexa de efetivar uma matrícula (checando todas as validações) e por varrer os dados armazenados para gerar relatórios analíticos, além de salvar e carregar o estado do programa.
+
+## Principais Relacionamentos
+
+A modelagem reflete fortes princípios de orientação a objetos:
+
+- Herança: `Aluno` estende as características de `Pessoa`, enquanto `Turma` estende as características de espaço e tempo da base `Oferta`.
+- Associação: O sistema possui referências diretas em vez de apenas guardar códigos. Uma `Turma` conhece o objeto `Curso` ao qual pertence. Uma `Matricula`, por sua vez, conecta diretamente a instância de um `Aluno` com a instância de uma `Turma`.
