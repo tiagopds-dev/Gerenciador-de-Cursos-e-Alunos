@@ -4,18 +4,18 @@
 
 Este projeto é um sistema de gerenciamento acadêmico desenvolvido para aplicar e consolidar os conceitos de Programação Orientada a Objetos (POO). 
 
-A aplicação foi desenhada para administrar o fluxo de uma instituição de ensino, controlando desde o catálogo de disciplinas até a abertura de turmas, efetivação de matrículas, acompanhamento de notas e frequência, além da geração de relatórios de desempenho e configuração de regras de negócio.
+A aplicação foi projetada para administrar o fluxo de uma instituição de ensino, controlando desde o catálogo de disciplinas até a abertura de turmas, efetivação de matrículas, acompanhamento de notas e frequência, além da geração de relatórios de desempenho e configuração de regras de negócio.
 
 ## Objetivo
 
-O escopo principal deste projeto é facilitar a administração de entidades acadêmicas, garantindo regras de negócio consistentes. Suas principais funcionalidades incluem:
+O escopo principal deste projeto visa facilitar a administração de entidades acadêmicas, garantindo regras de negócio consistentes. Suas principais funcionalidades incluem:
 
 - Cadastro e manutenção de cursos e alunos.
 - Abertura e fechamento de turmas vinculadas aos cursos.
 - Controle rigoroso de matrículas, evitando choques de horário e verificando limites de vagas e pré-requisitos.
 - Registro de acompanhamento acadêmico, englobando notas, frequências e status de aprovação.
-- Trancamento de disciplinas respeitando prazos estabelecidos.
-- Leitura de regras de aprovação e configurações a partir de arquivos externos.
+- Trancamento de disciplinas respeitando prazos pré-estabelecidos.
+- Leitura de parâmetros para aprovação e configurações a partir de arquivos externos.
 - Geração de relatórios estatísticos sobre o desempenho das turmas e alunos.
 - Persistência do estado do sistema (salvamento e carregamento de dados em formato JSON).
 
@@ -103,18 +103,20 @@ classDiagram
         +gerar_relatorio_top_n(periodo)
     }
 
-    %% Relações de Herança
-    Pessoa <|-- Aluno : Herda de
-    Oferta <|-- Turma : Herda de
+    %% 1. Relações de Herança (Sem texto para despoluir o diagrama)
+    Pessoa <|-- Aluno
+    Oferta <|-- Turma
 
-    %% Relações de Associação
-    Turma "*" --> "1" Curso : Referencia
-    Matricula "*" --> "1" Aluno : Vincula
-    Matricula "*" --> "1" Turma : Pertence a
-    Sistema "1" --> "1" Configuracao : Utiliza regras de
+    %% 2. Relações do Sistema (Força o Sistema a ficar no topo)
+    Sistema "1" --> "1" Configuracao : Lê regras
     Sistema "1" --> "*" Curso : Gerencia
     Sistema "1" --> "*" Turma : Gerencia
     Sistema "1" --> "*" Aluno : Gerencia
+
+    %% 3. Relações Associativas (Empurra a Matrícula para a base, evitando cruzamentos)
+    Turma "*" --> "1" Curso : Referencia
+    Matricula "*" --> "1" Aluno : Vincula
+    Matricula "*" --> "1" Turma : Pertence a
 ```
 
 ## Estrutura de Classes
