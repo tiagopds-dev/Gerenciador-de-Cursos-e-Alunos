@@ -1,4 +1,5 @@
 from datetime import date
+from typing import List
 
 class Pessoa:
     """
@@ -8,10 +9,28 @@ class Pessoa:
     pass
 
 
+class Graduacao:
+    """
+    Representa o curso superior do mundo real.
+    Atua como um agrupador lógico, guardando a grade curricular de disciplinas exigidas.
+    """
+    def adicionar_disciplina(self, disciplina: 'Curso') -> None:
+        """Insere um novo objeto Curso na lista da grade curricular."""
+        pass
+
+    def calcular_carga_horaria_total(self) -> int:
+        """Varre a grade curricular somando a carga horária de todos os cursos vinculados."""
+        pass
+
+    def verificar_elegibilidade_formatura(self, historico_aluno: List['Matricula']) -> bool:
+        """Compara o histórico do aluno com a grade curricular para determinar se ele pode colar grau."""
+        pass
+
+
 class Aluno(Pessoa):
     """
-    Especializa a classe Pessoa, adicionando uma matrícula única e um histórico 
-    acadêmico. Responsável também por calcular o Coeficiente de Rendimento (CR).
+    Especializa a classe Pessoa, adicionando uma matrícula única, o vínculo com a sua 
+    Graduação e um histórico acadêmico. Responsável por calcular o Coeficiente de Rendimento (CR).
     """
     def calcular_cr(self) -> float:
         """Calcula o coeficiente de rendimento/média ponderada com base nas disciplinas do histórico."""
@@ -49,7 +68,7 @@ class Turma(Oferta):
         """Altera o status da turma para 'Fechada', impedindo novas matrículas."""
         pass
 
-    def verificar_choque_horario(self, outra_turma) -> bool:
+    def verificar_choque_horario(self, outra_turma: 'Turma') -> bool:
         """Verifica se os horários desta turma conflitam com os de uma turma já matriculada."""
         pass
 
@@ -67,7 +86,7 @@ class Matricula:
         """Atualiza a porcentagem de frequência do aluno."""
         pass
 
-    def atualizar_situacao(self, regras) -> None:
+    def atualizar_situacao(self, regras: 'Configuracao') -> None:
         """Calcula a situação final do aluno com base nas notas, frequência e regras vigentes."""
         pass
 
@@ -92,11 +111,15 @@ class Configuracao:
 
 class Sistema:
     """
-    Classe principal de controle. Garante o funcionamento da CLI, armazenando 
-    as listas em memória, coordenando cadastros, efetivando matrículas e gerando relatórios.
+    Classe principal de controle. Garante o funcionamento da CLI, armazenando as listas 
+    (graduações, cursos, turmas, alunos) em memória, coordenando cadastros e matrículas.
     """
+    def cadastrar_graduacao(self, graduacao: Graduacao) -> None:
+        """Adiciona um novo curso superior à lista de graduações ofertadas pela instituição."""
+        pass
+
     def cadastrar_curso(self, curso: Curso) -> None:
-        """Adiciona um novo curso ao catálogo disponível do sistema."""
+        """Adiciona um novo curso (disciplina) ao catálogo disponível do sistema."""
         pass
 
     def cadastrar_aluno(self, aluno: Aluno) -> None:
