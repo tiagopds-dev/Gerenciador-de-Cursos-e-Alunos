@@ -10,7 +10,7 @@ A aplicação foi projetada para administrar o fluxo de uma instituição de ens
 
 O escopo principal deste projeto visa facilitar a administração de entidades acadêmicas, garantindo regras de negócio consistentes. Suas principais funcionalidades incluem:
 
-- Cadastro e manutenção de graduações (cursos superiores), disciplinas e alunos.
+- Cadastro e manutenção de graduações, disciplinas e alunos.
 - Abertura e fechamento de turmas vinculadas às disciplinas.
 - Controle rigoroso de matrículas, evitando choques de horário e verificando limites de vagas e pré-requisitos.
 - Registro de acompanhamento acadêmico, englobando notas, frequências e status de aprovação.
