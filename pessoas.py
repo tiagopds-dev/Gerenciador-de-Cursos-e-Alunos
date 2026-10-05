@@ -10,8 +10,8 @@ class Pessoa:
     def __init__(self, nome: str, cpf: str, telefone: str, email: str) -> None:
         self.nome = nome
         self.cpf = cpf
-        self._telefone = telefone
-        self._email = email
+        self.telefone = telefone
+        self.email = email
 
     # Transforma a leitura num Getter disfarçado de atributo
     @property
@@ -96,12 +96,42 @@ class Pessoa:
         # Notifica erro se o CPF não cumprir requisitos
         else:
             raise ValueError("CPF inválido!")
-    
 
 
+    # Transforma a leitura num Getter disfarçado de atributo
+    @property
+    def telefone(self):
+        return self.telefone
 
-    
+    # Transforma a atribuição num Setter com validação obrigatória
+    @telefone.setter
+    def telefone(self, novo_telefone):
 
-    
+        # Retira qualquer qualquer coisas que não sejam dígitos (0-9)
+        novo_telefone = re.sub(r'[^0-9]', '', novo_telefone)
 
-    
+        # Realiza verificação de tamanho mínimo
+        if len(novo_telefone) == 11:
+            self._telefone = novo_telefone
+
+       # Notifica erro se o nome não cumprir requisitos
+        else:
+            raise ValueError("Telefone inválido!")
+
+
+    # Transforma a leitura num Getter disfarçado de atributo
+    @property
+    def email(self):
+        return self.email
+
+    # Transforma a atribuição num Setter com validação obrigatória
+    @email.setter
+    def email(self, novo_email):
+
+        # Realiza verificação de formatação do e-mail
+        if ".com" in novo_email and "@" in novo_email:
+            self._email = novo_email
+
+       # Notifica erro se o email não cumprir requisitos
+        else:
+            raise ValueError("Telefone inválido!")
