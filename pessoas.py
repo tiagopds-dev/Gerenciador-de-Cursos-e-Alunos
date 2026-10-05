@@ -65,14 +65,13 @@ class Pessoa:
 
         
         # Validação matemática do 1º dígito verificador
-        verificacao_cpf = map(int, cpf_limpo[0:10])
         dig_veri_2 = sum(int(cpf_limpo[i]) * (11 - i) for i in range(10))
         dig_veri_2 = (dig_veri_2 * 10) % 11
 
         if dig_veri_2 == 10 or dig_veri_2 == 11:
             dig_veri_2 = 0
 
-        if dig_veri_2 != int(cpf_limpo[10]):
+        if str(dig_veri_2) != cpf_limpo[10]:
             return False
 
         # Valida o CPF caso tenha passado por todas as verificações
