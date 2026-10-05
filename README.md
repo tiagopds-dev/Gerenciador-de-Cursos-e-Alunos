@@ -35,7 +35,7 @@ classDiagram
 
     class Aluno {
         +string matricula
-        +graduacao graduacao_vinculada
+        +graduacao Graduacao
         +list historico
         +calcular_cr() float
     }
