@@ -27,30 +27,30 @@ Abaixo apresentamos a modelagem da arquitetura do sistema, detalhando as classes
 classDiagram
     %% Definição das Classes Base e Herdeiras
     class Pessoa {
-        +String nome
-        +String cpf
-        +String telefone
-        +String email
+        +string nome
+        +string cpf
+        +string telefone
+        +string email
     }
 
     class Aluno {
-        +String matricula
-        +Graduacao graduacao_vinculada
-        +List historico
+        +string matricula
+        +graduacao graduacao_vinculada
+        +list historico
         +calcular_cr() float
     }
 
     class Oferta {
-        +String periodo
-        +Dict dias_horarios
+        +string periodo
+        +dict dias_horarios
         +int vagas
-        +String local
+        +string local
     }
 
     class Turma {
-        +String id_turma
-        +String status
-        +List matriculas_ativas
+        +string id_turma
+        +string status
+        +list matriculas_ativas
         +abrir_turma()
         +fechar_turma()
         +verificar_choque_horario(outra_turma) bool
@@ -58,28 +58,28 @@ classDiagram
 
     %% Classes de Domínio Acadêmico
     class Graduacao {
-        +String codigo_mec
-        +String nome
+        +string codigo_mec
+        +string nome
         +int quantidade_semestres
-        +List grade_curricular
+        +list grade_curricular
         +adicionar_disciplina(disciplina)
         +calcular_carga_horaria_total() int
         +verificar_elegibilidade_formatura(historico_aluno) bool
     }
 
     class Curso {
-        +String codigo
-        +String nome
+        +string codigo
+        +string nome
         +int carga_horaria
-        +List pre_requisitos
-        +String ementa
+        +list pre_requisitos
+        +string ementa
         +verificar_ciclo_dependencia(novo_pre_requisito) bool
     }
 
     class Matricula {
-        +List notas
+        +dict notas
         +float frequencia
-        +String status
+        +string status
         +lancar_nota(nota)
         +lancar_frequencia(frequencia)
         +atualizar_situacao(regras)
@@ -88,9 +88,9 @@ classDiagram
 
     %% Classes de Controle e Gerenciamento
     class Configuracao {
-        +String caminho_arquivo
+        +string caminho_arquivo
         +float nota_minima_aprovacao
-        +Date data_limite_trancamento
+        +date data_limite_trancamento
         +int max_turmas_por_aluno
         +int top_n_alunos
         +carregar_configuracoes()
@@ -98,10 +98,10 @@ classDiagram
     }
 
     class Sistema {
-        +List graduacoes_ofertadas
-        +List cursos_disponiveis
-        +List turmas_abertas
-        +List alunos_matriculados
+        +list graduacoes_ofertadas
+        +list cursos_disponiveis
+        +list turmas_abertas
+        +list alunos_matriculados
         +cadastrar_graduacao()
         +cadastrar_curso()
         +cadastrar_aluno()
