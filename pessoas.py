@@ -54,26 +54,25 @@ class Pessoa:
             return False
 
         # Validação matemática do 1º dígito verificador
-        verificacao_cpf = int(cpf_limpo[0:9])
-        dig_veri_1 = [verificacao_cpf*i for i in range(10, 1, -1)]
-        dig_veri_1 = (sum(dig_veri_1) * 10) % 11
+        dig_veri_1 = sum(int(cpf_limpo[i]) * (10 - i) for i in range(9))
+        dig_veri_1 = (dig_veri_1) * 10 % 11
 
         if dig_veri_1 == 10 or dig_veri_1 == 11:
             dig_veri_1 = 0
 
-        if dig_veri_1 != cpf_limpo[9]:
+        if str(dig_veri_1) != (cpf_limpo[9]):
             return False
 
         
         # Validação matemática do 1º dígito verificador
-        verificacao_cpf = int(cpf_limpo[0:10])
-        dig_veri_2 = [verificacao_cpf*i for i in range(11, 1, -1)]
-        dig_veri_2 = (sum(dig_veri_2) * 10) % 11
+        verificacao_cpf = map(int, cpf_limpo[0:10])
+        dig_veri_2 = sum(int(cpf_limpo[i]) * (11 - i) for i in range(10))
+        dig_veri_2 = (dig_veri_2 * 10) % 11
 
         if dig_veri_2 == 10 or dig_veri_2 == 11:
             dig_veri_2 = 0
 
-        if dig_veri_2 != cpf_limpo[10]:
+        if dig_veri_2 != int(cpf_limpo[10]):
             return False
 
         # Valida o CPF caso tenha passado por todas as verificações
@@ -101,7 +100,7 @@ class Pessoa:
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def telefone(self):
-        return self.telefone
+        return self._telefone
 
     # Transforma a atribuição num Setter com validação obrigatória
     @telefone.setter
@@ -122,7 +121,7 @@ class Pessoa:
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def email(self):
-        return self.email
+        return self._email
 
     # Transforma a atribuição num Setter com validação obrigatória
     @email.setter
@@ -134,4 +133,4 @@ class Pessoa:
 
        # Notifica erro se o email não cumprir requisitos
         else:
-            raise ValueError("Telefone inválido!")
+            raise ValueError("Email inválido!")
