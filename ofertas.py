@@ -90,5 +90,4 @@ class Oferta:
             raise ValueError("Periodo inválido!")
 
         # Segue com a atribuição se todas as verificações foram atendidas
-        self._local = novo_local
-        
+        self._local = novo_local        
