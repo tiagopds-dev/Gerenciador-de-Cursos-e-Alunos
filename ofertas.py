@@ -21,35 +21,35 @@ class Oferta:
     
     # Transforma a atribuição num Setter com validação obrigatória
     @periodo.setter
-    def periodo(self, novo_periodo):
+    def periodo(self, novo_local):
 
         # Valida tamanho exato do formato definido para período
-        if len(novo_periodo) != 6:
+        if len(novo_local) != 6:
             raise ValueError("Periodo inválido!")
 
         # Valida o ano do período fornecido se encontra dentro do intervalo aceitável de anos
         datas_validas = [data for data in range((date.today().year - 1), (date.today().year) + 2)]
-        if novo_periodo[0:4] not in datas_validas:
+        if int(novo_local[0:4]) not in datas_validas:
             raise ValueError("Periodo inválido!")
 
         # Valida se o "semestre" fornecido no período está de acordo com o padrão
-        if novo_periodo[4:6] != ".1" and novo_periodo[4:6] != ".2":
+        if novo_local[4:6] != ".1" and novo_local[4:6] != ".2":
             raise ValueError("Periodo inválido!")
 
         # Segue com a atribuição se todas as verificações foram atendidas
-        self._periodo = novo_periodo
+        self._periodo = novo_local
 
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def dias_horarios(self):
-        return self._periodo
+        return self._dias_horarios
 
 
     # Transforma a atribuição num Setter com validação obrigatória
     @dias_horarios.setter
     def dias_horarios(self, novo_dias_horarios):
         
-        # Garante que a atribuição será feita apenas se o dicionário estiver vazio
+        # Garante que a atribuição será feita apenas se o dicionário não estiver vazio
         if novo_dias_horarios:
             self._dias_horarios = novo_dias_horarios
 
@@ -74,4 +74,21 @@ class Oferta:
         else:
             raise ValueError("Número de vagas inválidas!")
 
+
+    # Transforma a leitura num Getter disfarçado de atributo
+    @property
+    def local(self):
+        return self._local
+
+    
+    # Transforma a atribuição num Setter com validação obrigatória
+    @local.setter
+    def local(self, novo_local):
+
+        # Valida tamanho exato do formato definido para período
+        if len(novo_local) < 4:
+            raise ValueError("Periodo inválido!")
+
+        # Segue com a atribuição se todas as verificações foram atendidas
+        self._periodo = novo_local
         
