@@ -9,7 +9,7 @@ class Aluno(Pessoa):
     Graduação e um histórico acadêmico. Responsável por calcular o Coeficiente de Rendimento (CR).
     """
 
-    # Cria um atributo de classe para atua como contador sequencial
+    # Cria um atributo de classe que atua como contador sequencial
     # Pertence à classe Aluno, assim, não é resetado a cada novo objeto
     _contador_alunos = 1
 
@@ -38,6 +38,7 @@ class Aluno(Pessoa):
     @property
     def matricula(self):
         return self._matricula
+
 
     # Permite leitura e modificações internas na lista (ex: .append), 
     # mas a ausência do Setter impede a substituição acidental de todo o histórico

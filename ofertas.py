@@ -39,6 +39,7 @@ class Oferta:
         # Segue com a atribuição se todas as verificações foram atendidas
         self._periodo = novo_local
 
+
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def dias_horarios(self):
@@ -57,10 +58,12 @@ class Oferta:
         else:
             raise ValueError("Dias e horários não fornecidos!")
 
+
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def vagas(self):
         return self._vagas
+
 
     # Transforma a atribuição num Setter com validação obrigatória
     @vagas.setter

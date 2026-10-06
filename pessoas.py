@@ -13,10 +13,12 @@ class Pessoa:
         self.telefone = telefone
         self.email = email
 
+
     # Transforma a leitura num Getter disfarçado de atributo
     @property
     def nome(self):
         return self._nome
+
 
     # Transforma a atribuição num Setter com validação obrigatória
     @nome.setter
@@ -83,6 +85,7 @@ class Pessoa:
     def cpf(self):
         return self._cpf
 
+
     # Transforma a atribuição num Setter com validação obrigatória
     @cpf.setter
     def cpf(self, novo_cpf):
@@ -100,6 +103,7 @@ class Pessoa:
     @property
     def telefone(self):
         return self._telefone
+
 
     # Transforma a atribuição num Setter com validação obrigatória
     @telefone.setter
@@ -121,6 +125,7 @@ class Pessoa:
     @property
     def email(self):
         return self._email
+
 
     # Transforma a atribuição num Setter com validação obrigatória
     @email.setter
