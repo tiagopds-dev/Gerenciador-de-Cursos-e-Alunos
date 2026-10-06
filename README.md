@@ -51,6 +51,7 @@ classDiagram
         +string id_turma
         +string status
         +list matriculas_ativas
+        +curso Curso
         +abrir_turma()
         +fechar_turma()
         +verificar_choque_horario(outra_turma) bool
