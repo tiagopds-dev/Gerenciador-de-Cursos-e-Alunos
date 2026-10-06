@@ -13,6 +13,7 @@ class Aluno(Pessoa):
     # Pertence à classe Aluno, assim, não é resetado a cada novo objeto
     _contador_alunos = 1
 
+    # Construção da classe
     def __init__(self, nome: str, cpf: str, telefone: str, email: str, graduacao: Graduacao) -> None:
         # Chama o construtor da classe Base (Pessoa) para validar e salvar os dados básicos
         super().__init__(nome, cpf, telefone, email)
