@@ -86,9 +86,9 @@ class Oferta:
     def local(self, novo_local):
 
         # Valida tamanho exato do formato definido para período
-        if len(novo_local) < 4:
+        if not novo_local or len(novo_local) < 4:
             raise ValueError("Periodo inválido!")
 
         # Segue com a atribuição se todas as verificações foram atendidas
-        self._periodo = novo_local
+        self._local = novo_local
         
