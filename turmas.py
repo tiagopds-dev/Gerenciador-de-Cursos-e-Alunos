@@ -1,6 +1,7 @@
-from ofertas import Oferta
 import re
+from ofertas import Oferta
 from cursos import Curso
+from config import Configuracao
 
 class Turma(Oferta):
     """
@@ -12,7 +13,7 @@ class Turma(Oferta):
     # Pertence à classe Turma, assim, não é resetado a cada novo objeto
     _contador_turma = 1
 
-    def __init__(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: Curso) -> None:
+    def __init__(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: Curso, configuracao: Configuracao) -> None:
         super().__init__(periodo, dias_horarios, vagas, local)
 
         # Armazena apenas os dígitos do período da turma
@@ -33,7 +34,7 @@ class Turma(Oferta):
         self.curso = curso
 
         # Define automaticamente o status de "aberto" para uma turma criada
-        self.abrir_turma()
+        self.abrir_turma(configuracao)
         
 
 
@@ -70,7 +71,7 @@ class Turma(Oferta):
 
 
 
-    def abrir_turma(self) -> None:
+    def abrir_turma(self, configuracao: Configuracao) -> None:
         """Altera o status da turma para 'Aberta'."""
 
         # Proibe alteração de status caso turma já esteja aberta
@@ -81,13 +82,39 @@ class Turma(Oferta):
         if self.status == "Fechada" and len(self.matriculas_ativas):
             raise Exception(f"Operação inválida. Turma cheia!")
 
+        # Impede a alteração de status caso o período fornecido for anterior ao período atual
+        # if self.periodo < configuracao.semestre_vigente:
+        #     raise Exception(f"Operação inválida. Período não pode ser anterior ao atual!")
+
         self.status = "Aberta"
 
 
     def fechar_turma(self) -> None:
         """Altera o status da turma para 'Fechada', impedindo novas matrículas."""
-        pass
+        
+        # Proibe alteração de status caso turma já esteja fechada
+        if self.status == "Fechada":
+            raise Exception(f"Operação inválida. Status atual da turma: {self.status}!")
+
+        # Barra a alteração de status caso o número mínimo de matrículas ativas não tenha sido atingido
+        if len(self.matriculas_ativas) < 5:
+            raise Exception(f"Operação inválida. Límite mínimo de aluno não foi atingido!")
+
+        # Impede a alteração de status caso haja algum aluno com a frequencia ou nota final pendentes
+        for matricula in self.matriculas_ativas:
+            if not matricula.notas or not matricula.frequencia:
+                raise Exception(f"Operação inválida. Alunos com matrículas/notas não consolidadas!")
+            
 
     def verificar_choque_horario(self, outra_turma: 'Turma') -> bool:
         """Verifica se os horários desta turma conflitam com os de uma turma já matriculada."""
-        pass
+
+        # Tenta encontrar os pares dia-horário que são exatamente iguais em ambas as turmas
+        horarios_comuns = self.dias_horarios.items() & outra_turma.dias_horarios.items()
+
+        # Se existem, retorna verdadeiro
+        if horarios_comuns:
+            return True
+        # Caso contrário, retorna falso
+        else:
+            return False
