@@ -34,7 +34,7 @@ class Turma(Oferta):
         self.curso = curso
 
         # Define automaticamente o status de "aberto" para uma turma criada
-        self.turma = "Aberta"
+        self.status = "Aberta"
         
 
 
@@ -79,7 +79,7 @@ class Turma(Oferta):
             raise Exception(f"Operação inválida. Status atual da turma: {self.status}!")
 
         # Barra a alteração de status caso a turma já esteja fechada e cheia
-        if self.status == "Fechada" and len(self.matriculas_ativas):
+        if self.status == "Fechada" and len(self.matriculas_ativas) >= self.vagas:
             raise Exception(f"Operação inválida. Turma cheia!")
 
         # Impede a alteração de status caso o período fornecido for anterior ao período atual
@@ -106,7 +106,7 @@ class Turma(Oferta):
             if not matricula.notas or not matricula.frequencia:
                 raise Exception(f"Operação inválida. Alunos com matrículas/notas não consolidadas!")
 
-        # Se todas as verificações forem atendidas, a turma será aberta
+        # Se todas as verificações forem atendidas, a turma será fechada
         self.status = "Fechada"
     
 
