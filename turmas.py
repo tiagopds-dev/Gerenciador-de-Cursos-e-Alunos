@@ -34,7 +34,7 @@ class Turma(Oferta):
         self.curso = curso
 
         # Define automaticamente o status de "aberto" para uma turma criada
-        self.abrir_turma(configuracao)
+        self.turma = "Aberta"
         
 
 
@@ -86,6 +86,7 @@ class Turma(Oferta):
         # if self.periodo < configuracao.semestre_vigente:
         #     raise Exception(f"Operação inválida. Período não pode ser anterior ao atual!")
 
+        # Se todas as verificações forem atendidas, a turma será aberta
         self.status = "Aberta"
 
 
@@ -104,7 +105,10 @@ class Turma(Oferta):
         for matricula in self.matriculas_ativas:
             if not matricula.notas or not matricula.frequencia:
                 raise Exception(f"Operação inválida. Alunos com matrículas/notas não consolidadas!")
-            
+
+        # Se todas as verificações forem atendidas, a turma será aberta
+        self.status = "Fechada"
+    
 
     def verificar_choque_horario(self, outra_turma: 'Turma') -> bool:
         """Verifica se os horários desta turma conflitam com os de uma turma já matriculada."""
