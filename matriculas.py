@@ -22,6 +22,10 @@ class Matricula:
         # Inicializa as horas frequentadas como zero (momento da criação)
         self._horas_frequentadas = 0
 
+        self.aluno = aluno
+
+        self.turma = turma
+
 
     # Transforma a leitura num Getter disfarçado de atributo
     @property
@@ -45,7 +49,7 @@ class Matricula:
     # Dessa forma, não haverá como atribuir diretamente uma frequencia após a criação (apenas leitura)
     # Retorna o percentual de presença diretamente com base na carga horária
     @property
-    def matricula(self):
+    def frequencia(self):
         return (self._horas_frequentadas / self.turma.curso.carga_horaria) * 100
     
         
@@ -64,15 +68,19 @@ class Matricula:
         nome_nota = re.sub(r'[^a-zA-Z0-9]', '', nome_nota).upper()
 
         # Barra a adição da nota caso o nome da nota não se iguale aos padrões pré-definidos
-        if nome_nota != "AV1" or nome_nota != "AV2":
+        if nome_nota != "AV1" and nome_nota != "AV2":
             raise Exception("Nome de avaliação inválido!")
 
         # Proibe a adição da nota caso o valor passado não esteja no intervalo pré-definido
-        if 0 > nota > 10:
+        if nota < 0 or nota > 10:
                 raise Exception("Nota inválida!")
 
         # Caso todas as validações sejam atendidas, a nota é adicionada
-        self.nota[nome] = nota
+        self.notas[nome_nota] = nota
+
+        # Faz o recáculo inteligente da média após adicionar uma nota nota
+
+        self.notas['MF'] = round(((self.notas['AV1'] + self.notas['AV2']) / 2), 2)
     
     
     def lancar_frequencia(self, horas: int = 2) -> None:
