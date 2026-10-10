@@ -14,9 +14,9 @@ class Matricula:
 
         # Inicializa as notas como um dicionário vazio (momento da criação)
         self.notas = {
-            'AV1': 0,
-            'AV2': 0,
-            'MF': round((self.notas['AV1'] + self.notas['AV2']) / 2)
+            'AV1': None,
+            'AV2': None,
+            'MF': None
         }
             
         # Inicializa as horas frequentadas como zero (momento da criação)
@@ -78,9 +78,9 @@ class Matricula:
         # Caso todas as validações sejam atendidas, a nota é adicionada
         self.notas[nome_nota] = nota
 
-        # Faz o recáculo inteligente da média após adicionar uma nota nota
-
-        self.notas['MF'] = round(((self.notas['AV1'] + self.notas['AV2']) / 2), 2)
+        # Faz o recáculo inteligente da média somente após as duas notas tiverem sido adicionadas
+        if self.notas['AV1'] is not None and self.notas['AV2'] is not None:
+            self.notas['MF'] = round(((self.notas['AV1'] + self.notas['AV2']) / 2), 2)
     
     
     def lancar_frequencia(self, horas: int = 2) -> None:
