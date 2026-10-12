@@ -59,7 +59,7 @@ class Aluno(Pessoa):
 
         # Utiliza uma expressão geradora para calcular a soma de todas as medias finais armazenadas
         # no histórico
-        notas_somadas = sum(matricula.notas["media_final"] for matricula in self.historico)
+        notas_somadas = sum(matricula.notas['MF'] for matricula in self.historico)
 
         # Calcula o CR por meio de uma média aritmética entre as médias finais de cada turma
         # e a quantidade de turmas concluídas.
