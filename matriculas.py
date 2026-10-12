@@ -82,8 +82,8 @@ class Matricula:
     def lancar_nota(self, nome_nota: str, nota: float) -> None:
         """Adiciona uma nova nota validada à lista de notas do aluno nesta turma."""
 
-        # Verifica se o tipos de dado passado nos parâmetros do método foram corretos
-        if not isinstance(nome_nota, str) or not isinstance(nota, float):
+        # Verifica se os tipos de dados passados nos parâmetros do método foram corretos (blindagem contra booleano)
+        if not isinstance(nome_nota, str) or isinstance(nota, bool) or not isinstance(nota, (float, int)):
             raise TypeError
 
         # Impede a adição da nota caso o nome da nota esteja vazio
@@ -99,10 +99,10 @@ class Matricula:
 
         # Proibe a adição da nota caso o valor passado não esteja no intervalo pré-definido
         if nota < 0 or nota > 10:
-                raise Exception("Nota inválida!")
+            raise Exception("Nota inválida!")
 
         # Caso todas as validações sejam atendidas, a nota é adicionada
-        self.notas[nome_nota] = nota
+        self.notas[nome_nota] = float(nota)
 
         # Faz o recáculo inteligente da média somente após as duas notas tiverem sido adicionadas
         if self.notas['AV1'] is not None and self.notas['AV2'] is not None:
@@ -147,18 +147,19 @@ class Matricula:
             self.status = "Reprovado por Falta"
 
         # Reprova por nota caso o aluno tenha frequência suficiente, mas não atinja a média mínima
-        if self.frequencia >= regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao
+        elif self.frequencia >= regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao:
             self.status = "Reprovado por Nota"
 
         # Reprova por ambos os critérios caso o aluno não atinja nem a frequência nem a nota mínima
-        if self.frequencia < regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao
+        elif self.frequencia < regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao:
             self.status = "Reprovado por Falta e por Nota"
 
         # Caso passe por todas as verificações de reprovação, o aluno cumpre todos os requisitos e é aprovado
-        self.status = "Aprovado"
+        else:
+            self.status = "Aprovado"
         
 
-def trancar_matricula(self, regras: Configuracao) -> None:
+    def trancar_matricula(self, regras: Configuracao) -> None:
         """Valida e processa a desistência da disciplina dentro do prazo estipulado."""
 
         # Impede a alteração de status caso o aluno já tenha a matrícula trancada
