@@ -10,6 +10,9 @@ class Matricula:
     e atualiza o status de aprovação com base nas regras do sistema.
     """
 
+    # Atributo de classe privado e imutável (tupla)
+    _STATUS_VALIDOS = ("Cursando", "Trancada", "Reprovado por Falta", "Reprovado por Nota", "Reprovado por Falta e por Nota", "Aprovado")
+
     def __init__(self, aluno: Aluno, turma: Turma) -> None:
 
         # Inicializa as notas como um dicionário vazio (momento da criação)
@@ -22,8 +25,13 @@ class Matricula:
         # Inicializa as horas frequentadas como zero (momento da criação)
         self._horas_frequentadas = 0
 
+        # Inicializa a matrícula com um status automático no momento da criação
+        self._status = "Cursando"
+
+        # Recebe um objeto do tipo Aluno para realizar a associação
         self.aluno = aluno
 
+        # Recebe um objeto do tipo Turma para realizar a associação
         self.turma = turma
 
 
@@ -51,7 +59,25 @@ class Matricula:
     @property
     def frequencia(self):
         return (self._horas_frequentadas / self.turma.curso.carga_horaria) * 100
-    
+
+
+    # Transforma a leitura num Getter disfarçado de atributo
+    @property
+    def status(self):
+        return self._status
+
+
+    # Transforma a atribuição num Setter com validação obrigatória
+    @status.setter
+    def status(self, status):
+
+        # Impede a alteração caso o status passado não pertença a lista de status aceitos
+        if status not in Matricula._STATUS_VALIDOS:
+            raise Exception("Status de matrícula inválido!")
+
+        # Caso contrário, a atribuição é feita
+        self._status = status
+
         
     def lancar_nota(self, nome_nota: str, nota: float) -> None:
         """Adiciona uma nova nota validada à lista de notas do aluno nesta turma."""
@@ -105,10 +131,54 @@ class Matricula:
         self._horas_frequentadas += horas
         
 
-    def atualizar_situacao(self, regras: 'Configuracao') -> None:
+    def atualizar_situacao(self, regras: Configuracao) -> None:
         """Calcula a situação final do aluno com base nas notas, frequência e regras vigentes."""
-        pass
 
-    def trancar_matricula(self, data_atual: date, data_limite: date) -> bool:
+        # Impede a alteração de status caso aluno tenha a matrícula trancada
+        if self.status == "Trancada":
+            raise Exception("Aluno não elegível a alteração de status. Matrícula trancada!")
+
+        # Barra a alteração de status caso o aluno não possua as duas notas consolidadas no sistema
+        if self.notas['MF'] == None:
+            raise Exception("Aluno não elegível a alteração de status. Notas pendentes!")
+
+        # Reprova por falta caso o aluno atinja a nota mínima, mas não cumpra a frequência exigida
+        if self.frequencia < regras.frequencia_minima_aprovacao and self.notas['MF'] >= regras.nota_minima_aprovacao:
+            self.status = "Reprovado por Falta"
+
+        # Reprova por nota caso o aluno tenha frequência suficiente, mas não atinja a média mínima
+        if self.frequencia >= regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao
+            self.status = "Reprovado por Nota"
+
+        # Reprova por ambos os critérios caso o aluno não atinja nem a frequência nem a nota mínima
+        if self.frequencia < regras.frequencia_minima_aprovacao and self.notas['MF'] < regras.nota_minima_aprovacao
+            self.status = "Reprovado por Falta e por Nota"
+
+        # Caso passe por todas as verificações de reprovação, o aluno cumpre todos os requisitos e é aprovado
+        self.status = "Aprovado"
+        
+
+def trancar_matricula(self, regras: Configuracao) -> None:
         """Valida e processa a desistência da disciplina dentro do prazo estipulado."""
-        pass
+
+        # Impede a alteração de status caso o aluno já tenha a matrícula trancada
+        if self.status == "Trancada":
+            raise Exception("Aluno não elegível a alteração de status. Matrícula já está trancada!")
+
+        # Barra a alteração de status caso o aluno já tenha sido aprovado na disciplina
+        if self.status == "Aprovado":
+            raise Exception("Aluno não elegível a alteração de status. Processo de aprovação na disciplina já concluído!")
+        
+        # Bloqueia a alteração de status caso o aluno já tenha sido reprovado na disciplina
+        if self.status in ("Reprovado por Falta", "Reprovado por Nota", "Reprovado por Falta e por Nota"):
+            raise Exception("Aluno não elegível a alteração de status. Processo de avaliação na disciplina já concluído!")
+
+        # Captura a data atual do sistema para comparar com a data limite estabelecida para trancamento
+        data_atual = date.today()
+
+        # Restringe a alteração de status caso o período limite de trancamento já tenha passado
+        if data_atual > regras.data_limite_trancamento:
+            raise Exception("Aluno não elegível a alteração de status. Período de trancamento fechado!")
+
+        # Caso passe por todas as verificações estabelecidas, o aluno cumpre todos os requisitos e tem sua matrícula trancada
+        self.status = "Trancada"
