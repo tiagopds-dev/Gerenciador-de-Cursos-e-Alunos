@@ -26,7 +26,7 @@ class Matricula:
         self._horas_frequentadas = 0
 
         # Inicializa a matrícula com um status automático no momento da criação
-        self._status = "Cursando"
+        self.status = "Cursando"
 
         # Recebe um objeto do tipo Aluno para realizar a associação
         self.aluno = aluno
@@ -112,8 +112,8 @@ class Matricula:
     def lancar_frequencia(self, horas: int = 2) -> None:
         """Atualiza a porcentagem de frequência do aluno."""
 
-        # Verifica se o tipo de dado passado nos parâmetro do método foi correto
-        if not isinstance(horas, int):
+        # Verifica se o tipo de dado passado nos parâmetro do método foi correto (blindagem contra booleano)
+        if isinstance(horas, bool) or not isinstance(horas, int):
             raise TypeError
         
         # Impede a atualização da carga horária frequentada caso o valor das horas-aula passado seja zero
@@ -125,7 +125,7 @@ class Matricula:
 
         # Barra a atualização da carga horária frequentada caso as horas totais ultrapassem o valor da carga horária total da turma
         if horas_totais > self.turma.curso.carga_horaria:
-            raise Exception("A quantidade de horas frequentadas não pode ser maior que a cagar horária total da turma!")  
+            raise Exception("A quantidade de horas frequentadas não pode ser maior que a carga horária total da turma!")  
 
         # Caso todas as verificações sejam atendidas, atualiza o valor da carga horária frequentada
         self._horas_frequentadas += horas
@@ -139,7 +139,7 @@ class Matricula:
             raise Exception("Aluno não elegível a alteração de status. Matrícula trancada!")
 
         # Barra a alteração de status caso o aluno não possua as duas notas consolidadas no sistema
-        if self.notas['MF'] == None:
+        if self.notas['MF'] is None:
             raise Exception("Aluno não elegível a alteração de status. Notas pendentes!")
 
         # Reprova por falta caso o aluno atinja a nota mínima, mas não cumpra a frequência exigida
