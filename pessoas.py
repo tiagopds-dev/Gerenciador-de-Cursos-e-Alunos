@@ -8,8 +8,14 @@ class Pessoa:
 
     # Construção da classe
     def __init__(self, nome: str, cpf: str, telefone: str, email: str) -> None:
+        
+        # Inicializa o nome da pessoa (passando pela validação do setter)
         self.nome = nome
+        
+        # Inicializa o CPF da pessoa (passando pela validação geral do setter e específica do método validar_cpf)
         self.cpf = cpf
+
+        # Inicializa o telefone da pessoa (passando pela validação do setter)
         self.telefone = telefone
         self.email = email
 
@@ -24,17 +30,16 @@ class Pessoa:
     @nome.setter
     def nome(self, novo_nome):
 
-        # Retira qualquer qualquer coisas que não seja letras de A a Z, 
-        # letras acentuadas (do À ao ÿ) e espaços.
-        novo_nome = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome)
+        # Valida tamanho exato do argumento passado para nome e garante que seja uma string
+        if not isinstance(novo_nome, str) or not novo_nome or len(novo_nome) < 6:
+            raise Exception("Nome inválido!")
 
-        # Realiza verificação de tamanho mínimo
-        if len(novo_nome) > 6:
-            self._nome = novo_nome
+        # Retira qualquer qualquer coisas que não seja letras de A a Z, letras acentuadas (do À ao ÿ) e espaços
+        # Formata o nome, deixando a primeira letra de cada palavra maiúscula
+        novo_nome = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome).title()
 
-       # Notifica erro se o nome não cumprir requisitos
-        else:
-            raise ValueError("Nome inválido!")
+        # Caso o critério seja atendido, faz atribução segura
+        self._nome = novo_nome
         
 
     def __validar_cpf(self, cpf_digitado: str) -> bool:
@@ -44,7 +49,7 @@ class Pessoa:
         verificando o tamanho do CPF digitado e executando verificação matemática de dígitos verificadores.
         """
 
-        # Retira qualquer qualquer coisas que não sejam dígitos (0-9)
+        # Retira quaisquer coisas que não sejam dígitos (0-9)
         cpf_limpo = re.sub(r'[^0-9]', '', cpf_digitado)
 
         # Barra CPFs como "00000000000", "11111111111", "22222222222", etc.
@@ -52,7 +57,7 @@ class Pessoa:
             return False
 
         # Verifica o tamanho exato do CPF digitado
-        elif len(cpf_limpo) != 11:
+        if len(cpf_limpo) != 11:
             return False
 
         # Validação matemática do 1º dígito verificador
@@ -90,13 +95,17 @@ class Pessoa:
     @cpf.setter
     def cpf(self, novo_cpf):
 
-        # Chama a função d validação de CPF e já realiza a atribuição com o CPF "limpo"
+        # Valida tamanho exato do argumento passado para CPF e garante que seja uma string
+        if not isinstance(novo_cpf, str) or not novo_cpf or len(novo_cpf) < 11:
+            raise Exception("CPF inválido!")        
+
+        # Chama a função de validação de CPF e já realiza a atribuição com o CPF "limpo"
         if self.__validar_cpf(novo_cpf):
             self._cpf = re.sub(r'[^0-9]', '', novo_cpf)        
 
         # Notifica erro se o CPF não cumprir requisitos
         else:
-            raise ValueError("CPF inválido!")
+            raise Exception("CPF inválido!")
 
 
     # Transforma a leitura num Getter disfarçado de atributo
@@ -109,7 +118,7 @@ class Pessoa:
     @telefone.setter
     def telefone(self, novo_telefone):
 
-        # Retira qualquer qualquer coisas que não sejam dígitos (0-9)
+        # Retira quaisquer coisas que não sejam dígitos (0-9)
         novo_telefone = re.sub(r'[^0-9]', '', novo_telefone)
 
         # Realiza verificação de tamanho mínimo
