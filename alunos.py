@@ -29,7 +29,7 @@ class Aluno(Pessoa):
         # Inicializa o histórico como uma lista vazia (momento da criação)
         self._historico = []
 
-        # Atribui a graduação como atributo vinculado diretamente a um aluno
+        # Passa pelo setter para garantir que o objeto passado pertence à classe Graduacao
         self.graduacao = graduacao
 
 
@@ -47,26 +47,52 @@ class Aluno(Pessoa):
         return self._historico
 
 
+    # Transforma a leitura num Getter disfarçado de atributo
+    @property
+    def graduacao(self):
+        return self._graduacao
+        
+        
+    # Transforma a atribuição num Setter com validação obrigatória
+    @graduacao.setter
+    def graduacao(self, nova_graduacao: Graduacao):
+        
+        # Verifica se o objeto passado realmente pertence à classe Graduacao
+        if not isinstance(nova_graduacao, Graduacao):
+
+            # Notifica erro detalhado
+            raise TypeError("A graduação deve ser um objeto válido da classe Graduacao!")
+
+        # Caso pertença, realiza a atribuição segura
+        self._graduacao = nova_graduacao
+
+
     # Usa o decorador para garantir que o Coeficiente não fique desatualizado, fique blindado contra edição
-    # e tenha uma sitanxe de utilização limpa
+    # e tenha uma sintaxe de utilização limpa
     @property
     def cr(self) -> float:
-        """Calcula o coeficiente de rendimento/média ponderada com base nas disciplinas do histórico."""
+        """Calcula o coeficiente de rendimento/média ponderada com base nas disciplinas concluídas."""
 
-        # Caso o histórico esteja vazio (ex.: calouro) atribui diretamente 0.0 ao CR.
-        if not self.historico:
+        # Cria uma lista apenas com as matrículas do histórico que já foram concluídas (MF consolidada)
+        turmas_concluidas = [matricula for matricula in self.historico if matricula.notas['MF'] is not None]
+
+        # Caso o histórico de disciplinas concluídas esteja vazio (ex.: calouro), atribui diretamente 0.0
+        if not turmas_concluidas:
             return 0.0
 
-        # Utiliza uma expressão geradora para calcular a soma de todas as medias finais armazenadas
-        # no histórico
-        notas_somadas = sum(matricula.notas['MF'] for matricula in self.historico)
+        # Cálculo da Média Ponderada: (Soma de Notas * Carga Horária) / Carga Horária Total Cursada
+        soma_ponderada = sum(mat.notas['MF'] * mat.turma.curso.carga_horaria for mat in turmas_concluidas)
+        carga_horaria_total = sum(mat.turma.curso.carga_horaria for mat in turmas_concluidas)
 
-        # Calcula o CR por meio de uma média aritmética entre as médias finais de cada turma
-        # e a quantidade de turmas concluídas.
-        media = notas_somadas/len(self.historico)
+        # Medida de segurança contra divisão por zero
+        if carga_horaria_total == 0:
+            return 0.0
 
-        # Retorna o valor arredondado para duas cadas decimais
-        return round(media, 2)
+        # Calcula o CR dividindo a soma ponderada pelo total de horas cursadas
+        cr = soma_ponderada / carga_horaria_total
+
+        # Retorna o valor arredondado para duas casas decimais
+        return round(cr, 2)
 
 
     def __lt__(self, other):
@@ -79,9 +105,9 @@ class Aluno(Pessoa):
         if not isinstance(other, Aluno):
             return NotImplemented
 
-        # Num primeiro momento, o cálculo será feito somente caso os dois CR sejam diferentes
+        # Inicialmente, o cálculo será feito somente caso os dois CRs sejam diferentes
         if self.cr != other.cr:
             return self.cr < other.cr
 
-        # Caso os dois CRs sejam iguais, o nome será considerado critério de desempate
+        # Caso os dois CRs sejam iguais, a ordem alfabética do nome será considerada critério de desempate
         return self.nome < other.nome
