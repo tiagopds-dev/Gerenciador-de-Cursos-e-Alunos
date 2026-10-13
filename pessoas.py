@@ -17,6 +17,8 @@ class Pessoa:
 
         # Inicializa o telefone da pessoa (passando pela validação do setter)
         self.telefone = telefone
+
+        # Inicializa o e-mail da pessoa (passando pela validação do setter)
         self.email = email
 
 
@@ -30,16 +32,20 @@ class Pessoa:
     @nome.setter
     def nome(self, novo_nome):
 
-        # Valida tamanho exato do argumento passado para nome e garante que seja uma string
-        if not isinstance(novo_nome, str) or not novo_nome or len(novo_nome) < 6:
-            raise Exception("Nome inválido!")
+        # Valida o tipo de dado para garantir que o argumento passado seja uma string
+        if not isinstance(novo_nome, str):
+            raise TypeError("O nome deve ser enviado em formato de texto!")
 
-        # Retira qualquer qualquer coisas que não seja letras de A a Z, letras acentuadas (do À ao ÿ) e espaços
-        # Formata o nome, deixando a primeira letra de cada palavra maiúscula
-        novo_nome = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome).title()
+        # Retira quaisquer coisas que não sejam letras de A a Z, letras acentuadas (do À ao ÿ) e espaços
+        # Formata o nome, deixando a primeira letra de cada palavra maiúscula e removendo espaços nas pontas
+        novo_nome_limpo = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome).title().strip()
 
-        # Caso o critério seja atendido, faz atribução segura
-        self._nome = novo_nome
+        # Valida o tamanho mínimo da string após a higienização 
+        if len(novo_nome_limpo) < 6:
+            raise ValueError("O nome deve conter pelo menos 6 caracteres válidos!")
+
+        # Caso os critério sejam atendidos, faz atribuição segura
+        self._nome = novo_nome_limpo
         
 
     def __validar_cpf(self, cpf_digitado: str) -> bool:
@@ -70,8 +76,7 @@ class Pessoa:
         if str(dig_veri_1) != (cpf_limpo[9]):
             return False
 
-        
-        # Validação matemática do 1º dígito verificador
+        # Validação matemática do 2º dígito verificador
         dig_veri_2 = sum(int(cpf_limpo[i]) * (11 - i) for i in range(10))
         dig_veri_2 = (dig_veri_2 * 10) % 11
 
@@ -95,17 +100,26 @@ class Pessoa:
     @cpf.setter
     def cpf(self, novo_cpf):
 
-        # Valida tamanho exato do argumento passado para CPF e garante que seja uma string
-        if not isinstance(novo_cpf, str) or not novo_cpf or len(novo_cpf) < 11:
-            raise Exception("CPF inválido!")        
+        # Valida o tipo de dado para garantir que o argumento passado seja uma string
+        if not isinstance(novo_cpf, str):
+            raise TypeError("O CPF deve ser enviado em formato de texto!")
 
-        # Chama a função de validação de CPF e já realiza a atribuição com o CPF "limpo"
-        if self.__validar_cpf(novo_cpf):
-            self._cpf = re.sub(r'[^0-9]', '', novo_cpf)        
+        # Valida se o CPF não está vazio e não é composto somente por espaços
+        if not novo_cpf.strip():
+            raise ValueError("O campo CPF não pode estar vazio!")
 
-        # Notifica erro se o CPF não cumprir requisitos
+        # Higienniza o CPF, deixando apenas os dígitos
+        cpf_limpo = re.sub(r'[^0-9]', '', novo_cpf)
+
+        # Valida o tamanho da string limpa
+        if len(cpf_limpo) != 11:
+            raise ValueError(f"O CPF deve conter exatamente 11 números. Você enviou {len(cpf_limpo)}.")
+
+        # Realiza verificação matemática e, caso todas as verificaçoes sejam atendidas, atribui
+        if self.__validar_cpf(cpf_limpo):
+            self._cpf = cpf_limpo
         else:
-            raise Exception("CPF inválido!")
+            raise ValueError("O CPF informado possui dígitos verificadores incorretos.")
 
 
     # Transforma a leitura num Getter disfarçado de atributo
@@ -118,16 +132,20 @@ class Pessoa:
     @telefone.setter
     def telefone(self, novo_telefone):
 
+        # Valida o tipo de dado para garantir que o argumento passado seja uma string
+        if not isinstance(novo_telefone, str):
+            raise TypeError("O telefone deve ser enviado em formato de texto!")
+
         # Retira quaisquer coisas que não sejam dígitos (0-9)
-        novo_telefone = re.sub(r'[^0-9]', '', novo_telefone)
+        novo_telefone_limpo = re.sub(r'[^0-9]', '', novo_telefone)
 
-        # Realiza verificação de tamanho mínimo
-        if len(novo_telefone) == 11:
-            self._telefone = novo_telefone
+        # Realiza verificação de tamanho mínimo e, caso todas as verificaçoes sejam atendidas, atribui
+        if len(novo_telefone_limpo) == 11:
+            self._telefone = novo_telefone_limpo
 
-       # Notifica erro se o nome não cumprir requisitos
+        # Notifica erro detalhado
         else:
-            raise ValueError("Telefone inválido!")
+            raise ValueError(f"O telefone deve conter exatamente 11 números (com DDD)! Você enviou {len(novo_telefone_limpo)}.")
 
 
     # Transforma a leitura num Getter disfarçado de atributo
@@ -140,10 +158,17 @@ class Pessoa:
     @email.setter
     def email(self, novo_email):
 
-        # Realiza verificação de formatação do e-mail
-        if ".com" in novo_email and "@" in novo_email:
-            self._email = novo_email
+        # Valida o tipo de dado para garantir que o argumento passado seja uma string
+        if not isinstance(novo_email, str):
+            raise TypeError("O e-mail deve ser enviado em formato de texto!")
 
-       # Notifica erro se o email não cumprir requisitos
+        # Remove espaços em branco nas extremidades
+        novo_email = novo_email.strip()
+
+        # Realiza verificação estrutural de elementos essenciais e, caso todas as verificaçoes sejam atendidas, atribui
+        if "@" in novo_email and "." in novo_email and " " not in novo_email:
+            self._email = novo_email
+            
+        # Notifica erro detalhado
         else:
-            raise ValueError("Email inválido!")
+            raise ValueError("O formato do e-mail é inválido. Certifique-se de usar '@', '.' e não incluir espaços!")
