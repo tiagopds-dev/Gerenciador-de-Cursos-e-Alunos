@@ -35,6 +35,9 @@ class Turma(Oferta):
 
         # Define automaticamente o status de "aberto" para uma turma criada
         self.status = "Aberta"
+
+        # Adiciona a turma criada no histórico de turmas ofertadas de um curso
+        self.curso._turmas_ofertadas.append(self)
         
 
 
