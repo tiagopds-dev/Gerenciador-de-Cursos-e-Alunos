@@ -12,8 +12,8 @@ O escopo principal deste projeto visa facilitar a administração de entidades a
 
 - Cadastro e manutenção de graduações, disciplinas e alunos.
 - Abertura e fechamento de turmas vinculadas às disciplinas.
-- Controle rigoroso de matrículas, evitando choques de horário e verificando limites de vagas e pré-requisitos.
-- Registro de acompanhamento acadêmico, englobando notas, frequências e status de aprovação.
+- Controle rigoroso de matrículas, evitando choque de horário e verificando limites de vagas e pré-requisitos.
+- Registro de acompanhamento acadêmico, englobando notas, frequências e situação de aprovação.
 - Trancamento de disciplinas respeitando prazos pré-estabelecidos.
 - Leitura de parâmetros para aprovação e configurações a partir de arquivos externos.
 - Geração de relatórios estatísticos sobre o desempenho das turmas e alunos.
@@ -152,17 +152,17 @@ Estas classes modelam os indivíduos que interagem ou fazem parte da instituiç�
 Responsáveis por estruturar o que a instituição ensina e como isso é oferecido aos alunos em cada semestre.
 
 - `Graduacao`: Representa o curso superior do mundo real. Atua como um agrupador lógico, guardando a grade curricular de disciplinas exigidas. Possui capacidade de calcular a carga horária total e verificar se o aluno cumpriu os requisitos para formatura.
-- `Curso`: Representa a disciplina em sua essência. Guarda a ementa, carga horária e, principalmente, a lista de pré-requisitos para ser cursada a priori.
+- `Curso`: Representa a disciplina em sua essência. Guarda a ementa, carga horária e, principalmente, a lista de pré-requisitos a ser cursada.
 - `Oferta`: É a classe base responsável por dar vida a uma disciplina em um momento específico no tempo. Nela são centralizados os dados logísticos de qualquer turma que será aberta, como o período letivo, os dias da semana, a sala e o limite de vagas disponíveis.
-- `Turma`: Herda de Oferta e concretiza a oferta de um Curso específico. Ela controla o seu próprio status (aberta ou fechada), gerencia as matrículas ativas nela e possui a lógica para impedir choques de horário com outras turmas.
+- `Turma`: Herda de Oferta e concretiza a oferta de um Curso específico. Ela controla a sua própria condição (aberta ou fechada), gerencia as matrículas ativas nela e possui a lógica para impedir choques de horário com outras turmas.
 
 ### Vínculo Acadêmico
 
-- `Matricula`: Atua como uma classe associativa, sendo a ponte que liga um Aluno a uma Turma. Guarda as notas e a frequência do aluno, atualiza o status de aprovação ou reprovação com base nas regras do sistema e gerencia a lógica de trancamento dentro do prazo estipulado.
+- `Matricula`: Atua como uma classe associativa, sendo a ponte que liga um Aluno a uma Turma. Guarda as notas e a frequência do aluno, atualiza a situação de aprovação ou reprovação com base nas regras do sistema e gerência a lógica de trancamento dentro do prazo estipulado.
 
 ### Controle, Gerenciamento e Relatórios
 
-Classes responsáveis pelo funcionamento do sistema como um todo e pela persistência de informações.
+Classes responsáveis pelo funcionamento do sistema na totalidade e pela persistência de informações.
 
 - `Configuracao`: Responsável por isolar as regras de negócio parametrizáveis. Ela lê dados de um arquivo e garante que o sistema inteiro obedeça às mesmas definições de notas mínimas, prazos e limites.
 - `Sistema`: É a classe principal de controle. Ela garante todo o funcionamento do programa, armazenando as listas de graduações, alunos, turmas e disciplinas em memória. É responsável pelas rotinas de criação, pela lógica de efetivar uma matrícula (checando todas as validações) e por percorrer os dados armazenados para gerar relatórios, além de salvar e carregar o estado do programa.
