@@ -142,6 +142,14 @@ class Curso:
         return f"Graduação: {self.graduacao.nome}\n{self.nome}\n{self.carga_horaria}h\nPré-requisitos: {self.pre_requisitos}"
 
 
-    def verificar_ciclo_dependencia(self, novo_pre_requisito: str) -> bool:
+    def verificar_ciclo_dependencia(self, novo_pre_requisito: Curso) -> None:
         """Impede dependências cruzadas (ex: A exige B e B exige A simultaneamente)."""
-        pass
+        # Inspeciona a lista de exigências do curso que está a tentar ser adicionado.
+        # Se 'self' (o curso atual) já estiver lá, uma adição mútua criaria um paradoxo.
+        if self in novo_pre_requisito.pre_requisitos:
+            raise ValueError(
+                f"ERRO: Ciclo de dependência detectada!\nNão é possível adicionar {novo_pre_requisito.nome} como pré-requisito, pois ele já exige {self.nome}.")
+        else:
+            # Caso não haja conflito estrutural, o curso é aprovado e anexado à lista
+            self.pre_requisitos.append(novo_pre_requisito)
+            print("Pré-requisito adicionado com sucesso!")
