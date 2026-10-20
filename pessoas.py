@@ -62,7 +62,7 @@ class Pessoa:
 
 
     @nome.setter
-    def nome(self, novo_nome):
+    def nome(self, novo_nome: str):
 
         if not isinstance(novo_nome, str):
             raise TypeError("O nome deve ser enviado em formato de texto!")
@@ -92,7 +92,7 @@ class Pessoa:
 
 
     @cpf.setter
-    def cpf(self, novo_cpf):
+    def cpf(self, novo_cpf: str):
 
         if not isinstance(novo_cpf, str):
             raise TypeError("O CPF deve ser enviado em formato de texto!")
@@ -119,7 +119,7 @@ class Pessoa:
 
 
     @telefone.setter
-    def telefone(self, novo_telefone):
+    def telefone(self, novo_telefone: str):
 
         if not isinstance(novo_telefone, str):
             raise TypeError("O telefone deve ser enviado em formato de texto!")
@@ -141,7 +141,7 @@ class Pessoa:
 
 
     @email.setter
-    def email(self, novo_email):
+    def email(self, novo_email: str):
 
         if not isinstance(novo_email, str):
             raise TypeError("O e-mail deve ser enviado em formato de texto!")
