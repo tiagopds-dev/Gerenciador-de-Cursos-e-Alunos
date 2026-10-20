@@ -41,7 +41,7 @@ def validar_cpf(cpf: str) -> bool:
     # Valida o CPF caso tenha passado por todas as verificações
     return True
 
-
+# Construção da classe
 class Pessoa:
     """
     Classe base que concentra os dados de identificação comuns a qualquer
