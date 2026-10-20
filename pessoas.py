@@ -131,7 +131,8 @@ class Pessoa:
         if len(novo_telefone) == 11:
             self._telefone = novo_telefone
         else:
-            raise ValueError(f"O telefone deve conter exatamente 11 números (com DDD)! Você enviou {len(novo_telefone)}.")
+            raise ValueError(
+                f"O telefone deve conter exatamente 11 números (com DDD)! Você enviou {len(novo_telefone)}.")
 
 
     @property
@@ -148,7 +149,8 @@ class Pessoa:
         # Remove espaços em branco nas extremidades
         novo_email = novo_email.strip()
 
-        # Realiza verificação estrutural de elementos essenciais e, caso todas as verificações sejam atendidas, atribui
+        # Realiza verificação estrutural de elementos essenciais
+        # Caso todas as verificações sejam atendidas, atribui
         if "@" in novo_email and "." in novo_email and " " not in novo_email:
             self._email = novo_email
         else:
