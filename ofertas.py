@@ -1,4 +1,5 @@
-from datetime import date 
+from datetime import date
+
 
 class Oferta:
     """
@@ -13,84 +14,89 @@ class Oferta:
         self.vagas = vagas
         self.local = local
 
-    # Transforma a leitura num Getter disfarçado de atributo
     @property
     def periodo(self):
         return self._periodo
 
-    
-    # Transforma a atribuição num Setter com validação obrigatória
     @periodo.setter
-    def periodo(self, novo_local):
+    def periodo(self, novo_periodo: str):
+
+        # Valida o tipo de dado para evitar falhas na etapa de verificação do ano
+        if not isinstance(novo_periodo, str):
+            raise TypeError("O período deve ser enviado em formato de texto (ex: '2026.1')!")
 
         # Valida tamanho exato do formato definido para período
-        if len(novo_local) != 6:
-            raise ValueError("Periodo inválido!")
+        if len(novo_periodo) != 6:
+            raise ValueError(
+                f"O formato do período é inválido. Esperado 6 caracteres (AAAA.S), mas recebeu {len(novo_periodo)} ('{novo_periodo}').")
 
-        # Valida o ano do período fornecido se encontra dentro do intervalo aceitável de anos
-        datas_validas = [data for data in range((date.today().year - 1), (date.today().year) + 2)]
-        if int(novo_local[0:4]) not in datas_validas:
-            raise ValueError("Periodo inválido!")
+        # Garante que os 4 primeiros caracteres são numéricos antes de tentar converter para inteiro
+        ano_str = novo_periodo[0:4]
+        if not ano_str.isdigit():
+            raise ValueError(f"O ano do período deve conter apenas números. Valor recebido: '{ano_str}'.")
 
-        # Valida se o "semestre" fornecido no período está de acordo com o padrão
-        if novo_local[4:6] != ".1" and novo_local[4:6] != ".2":
-            raise ValueError("Periodo inválido!")
+        # Valida se o ano do período fornecido se encontra dentro do intervalo aceitável
+        ano_atual = date.today().year
+        datas_validas = [ano_atual - 1, ano_atual, ano_atual + 1]
+
+        if int(ano_str) not in datas_validas:
+            raise ValueError(
+                f"O ano do período ({ano_str}) está fora do limite permitido. Anos válidos: {datas_validas[0]}, {datas_validas[1]} ou {datas_validas[2]}.")
+
+        # Valida se o "semestre" fornecido no período está conforme o padrão
+        semestre_str = novo_periodo[4:6]
+        if semestre_str not in [".1", ".2"]:
+            raise ValueError(
+                f"O identificador de semestre ('{semestre_str}') é inválido. Utilize obrigatoriamente '.1' ou '.2'.")
 
         # Segue com a atribuição se todas as verificações foram atendidas
-        self._periodo = novo_local
+        self._periodo = novo_periodo
 
-
-    # Transforma a leitura num Getter disfarçado de atributo
     @property
     def dias_horarios(self):
         return self._dias_horarios
 
-
-    # Transforma a atribuição num Setter com validação obrigatória
     @dias_horarios.setter
-    def dias_horarios(self, novo_dias_horarios):
-        
+    def dias_horarios(self, novo_dias_horarios: dict):
+
+        if not isinstance(novo_dias_horarios, dict):
+            raise TypeError("Os dias e horários devem ser enviados no formato de dicionário!")
+
         # Garante que a atribuição será feita apenas se o dicionário não estiver vazio
-        if novo_dias_horarios:
-            self._dias_horarios = novo_dias_horarios
+        if not novo_dias_horarios:
+            raise ValueError("O dicionário de dias e horários não pode estar vazio!")
 
-        # Lança exceção, caso contrário
-        else:
-            raise ValueError("Dias e horários não fornecidos!")
+        self._dias_horarios = novo_dias_horarios
 
-
-    # Transforma a leitura num Getter disfarçado de atributo
     @property
     def vagas(self):
         return self._vagas
 
-
-    # Transforma a atribuição num Setter com validação obrigatória
     @vagas.setter
-    def vagas(self, novas_vagas):
+    def vagas(self, novas_vagas: int):
+
+        if not isinstance(novas_vagas, int) or isinstance(novas_vagas, bool):
+            raise TypeError("O número de vagas deve ser um número inteiro!")
 
         # Garante que a atribuição será feita apenas se a quantidade de vagas for positiva
-        if novas_vagas > 0:
-            self._vagas = novas_vagas
+        if novas_vagas <= 0:
+            raise ValueError(f"O número de vagas deve ser maior que zero. Valor recebido: {novas_vagas}.")
 
-        # Lança exceção, caso contrário
-        else:
-            raise ValueError("Número de vagas inválidas!")
+        self._vagas = novas_vagas
 
-
-    # Transforma a leitura num Getter disfarçado de atributo
     @property
     def local(self):
         return self._local
 
-    
-    # Transforma a atribuição num Setter com validação obrigatória
     @local.setter
-    def local(self, novo_local):
+    def local(self, novo_local: str):
 
-        # Valida tamanho exato do formato definido para período
-        if not novo_local or len(novo_local) < 4:
-            raise ValueError("Periodo inválido!")
+        if not isinstance(novo_local, str):
+            raise TypeError("O local da oferta deve ser enviado em formato de texto!")
+
+        # Valida tamanho exato do formato definido para local
+        if not novo_local.strip() or len(novo_local) < 4:
+            raise ValueError("O nome do local deve conter pelo menos 4 letras válidas!")
 
         # Segue com a atribuição se todas as verificações foram atendidas
-        self._local = novo_local        
+        self._local = novo_local
