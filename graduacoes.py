@@ -29,6 +29,7 @@ class Graduacao:
     def codigo_mec(self):
         return self._codigo_mec
 
+
     @codigo_mec.setter
     def codigo_mec(self, novo_codigo: str):
         if not isinstance(novo_codigo, str):
@@ -43,9 +44,11 @@ class Graduacao:
 
         self._codigo_mec = novo_codigo
 
+
     @property
     def nome(self):
         return self._nome
+
 
     @nome.setter
     def nome(self, novo_nome):
@@ -70,9 +73,11 @@ class Graduacao:
 
         self._nome = " ".join(palavras)
 
+
     @property
     def qtd_semestres(self):
         return self._qtd_semestres
+
 
     @qtd_semestres.setter
     def qtd_semestres(self, nova_quantidade: int):
@@ -85,9 +90,11 @@ class Graduacao:
 
         self._qtd_semestres = nova_quantidade
 
+
     @property
     def grade_curricular(self):
         return self._grade_curricular
+
 
     # O uso de 'Curso' em formato de string (Forward Reference) na tipagem protege a IDE
     def adicionar_disciplina(self, disciplina: 'Curso') -> None:
@@ -101,6 +108,7 @@ class Graduacao:
 
         self.grade_curricular.append(disciplina)
 
+
     def calcular_carga_horaria_total(self) -> int:
         """Varre a grade curricular somando a carga horária de todos os cursos vinculados."""
 
@@ -108,6 +116,7 @@ class Graduacao:
             raise ValueError(f"ERRO: {self.nome} não possui disciplinas cadastradas!")
 
         return sum(curso.carga_horaria for curso in self.grade_curricular)
+
 
     def verificar_elegibilidade_formatura(self, historico_aluno: 'list[Matricula]') -> bool:
         """Compara o histórico do aluno com a grade curricular para determinar se ele pode colar grau."""
