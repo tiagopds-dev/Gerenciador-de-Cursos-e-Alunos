@@ -102,7 +102,8 @@ class Turma(Oferta):
         # Impede a alteração de condição caso o período fornecido seja anterior ao período atual
         if self.periodo < configuracao.semestre_vigente:
             raise ValueError(
-                f"Não é possível abrir uma turma de um período passado ({self.periodo})! O semestre vigente é {configuracao.semestre_vigente}.")
+                f"Não é possível abrir uma turma de um período passado ({self.periodo})!"
+                f"O semestre vigente é {configuracao.semestre_vigente}.")
 
         # Se todas as verificações forem atendidas, a turma será aberta
         self.status = "Aberta"
@@ -124,7 +125,8 @@ class Turma(Oferta):
         for matricula in self.matriculas_ativas:
             if matricula.status == 'Cursando':
                 raise ValueError(
-                    f"Não é possível fechar a turma {self.id_turma}. O aluno {matricula.aluno.nome} ainda possui o status 'Cursando'!")
+                    f"Não é possível fechar a turma {self.id_turma}. "
+                    f"O aluno {matricula.aluno.nome} ainda possui o status 'Cursando'!")
 
 
         # Se todas as verificações forem atendidas, a turma será fechada

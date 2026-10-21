@@ -30,7 +30,8 @@ class Oferta:
         # Valida tamanho exato do formato definido para período
         if len(novo_periodo) != 6:
             raise ValueError(
-                f"O formato do período é inválido. Esperado 6 caracteres (AAAA.S), mas recebeu {len(novo_periodo)} ('{novo_periodo}').")
+                f"O formato do período é inválido. "
+                f"Esperado 6 caracteres (AAAA.S), mas recebeu {len(novo_periodo)} ('{novo_periodo}').")
 
         # Garante que os 4 primeiros caracteres são numéricos antes de tentar converter para inteiro
         ano_str = novo_periodo[0:4]
@@ -43,7 +44,8 @@ class Oferta:
 
         if int(ano_str) not in datas_validas:
             raise ValueError(
-                f"O ano do período ({ano_str}) está fora do limite permitido. Anos válidos: {datas_validas[0]}, {datas_validas[1]} ou {datas_validas[2]}.")
+                f"O ano do período ({ano_str}) está fora do limite permitido! "
+                f"Anos válidos: {datas_validas[0]}, {datas_validas[1]} ou {datas_validas[2]}.")
 
         # Valida se o "semestre" fornecido no período está conforme o padrão
         semestre_str = novo_periodo[4:6]
