@@ -122,11 +122,10 @@ class Turma(Oferta):
                 f"A turma {self.id_turma} não atingiu o quórum mínimo de 5 alunos (Atuais: {len(self.matriculas_ativas)})!")
 
         # Impede o fechamento se houver matrículas não consolidadas
-        for matricula in self.matriculas_ativas:
-            if matricula.status == 'Cursando':
+        if any(matricula.status == 'Cursando'for matricula in self.matriculas_ativas):
                 raise ValueError(
                     f"Não é possível fechar a turma {self.id_turma}. "
-                    f"O aluno {matricula.aluno.nome} ainda possui o status 'Cursando'!")
+                    f"Ainda há alunos com o status 'Cursando'!")
 
 
         # Se todas as verificações forem atendidas, a turma será fechada
