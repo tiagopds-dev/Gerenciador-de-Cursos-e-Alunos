@@ -1,6 +1,5 @@
 import re
 
-from matriculas import Matricula
 from ofertas import Oferta
 from typing import TYPE_CHECKING
 
@@ -50,7 +49,7 @@ class Turma(Oferta):
         self.status = "Aberta"
 
         # Adiciona a turma criada no histórico de turmas ofertadas do curso correspondente
-        self.curso._turmas_ofertadas.append(self)
+        self.curso.vincular_turma(self)
 
     # Como o ID da turma será gerado sempre de forma automática, não será criado um setter
     # Dessa forma, não haverá como alterar o ID da turma após a criação (apenas leitura)
