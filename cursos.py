@@ -101,7 +101,7 @@ class Curso:
         self._carga_horaria = nova_carga_horaria
 
 
-    # Permite leitura e modificações internas na lista de pré-requisitos (ex: .append),
+    # Permite leitura e modificações internas na lista de pré-requisitos (ex: '.append'),
     # mas a ausência do Setter impede a substituição acidental de todos os pré-requisitos
     @property
     def pre_requisitos(self):
