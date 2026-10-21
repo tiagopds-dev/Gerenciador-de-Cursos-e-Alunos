@@ -7,18 +7,18 @@ def validar_cpf(cpf: str) -> bool:
     verificando o tamanho do CPF digitado e executando verificação matemática de dígitos verificadores.
     """
 
-    # Retira quaisquer coisas que não sejam dígitos (0-9)
-    cpf = re.sub(r'[^0-9]', '', cpf)
+    # Retira quaisquer coisas que não sejam dígitos (0-9).
+    cpf = re.sub(r"[^0-9]", "", cpf)
 
     # Barra CPFs como "00000000000", "11111111111", "22222222222", etc.
     if len(set(cpf)) == 1:
         return False
 
-    # Verifica o tamanho exato do CPF digitado
+    # Verifica o tamanho exato do CPF digitado.
     if len(cpf) != 11:
         return False
 
-    # Validação matemática do 1º dígito verificador
+    # Validação matemática do 1º dígito verificador.
     dig_veri_1 = sum(int(cpf[i]) * (10 - i) for i in range(9))
     dig_veri_1 = (dig_veri_1 * 10) % 11
 
@@ -28,7 +28,7 @@ def validar_cpf(cpf: str) -> bool:
     if str(dig_veri_1) != cpf[9]:
         return False
 
-    # Validação matemática do 2º dígito verificador
+    # Validação matemática do 2º dígito verificador.
     dig_veri_2 = sum(int(cpf[i]) * (11 - i) for i in range(10))
     dig_veri_2 = (dig_veri_2 * 10) % 11
 
@@ -38,10 +38,10 @@ def validar_cpf(cpf: str) -> bool:
     if str(dig_veri_2) != cpf[10]:
         return False
 
-    # Valida o CPF caso tenha passado por todas as verificações
+    # Valida o CPF caso tenha passado por todas as verificações.
     return True
 
-# Construção da classe
+# Construção da classe.
 class Pessoa:
     """
     Classe base que concentra os dados de identificação comuns a qualquer
@@ -67,17 +67,17 @@ class Pessoa:
         if not isinstance(novo_nome, str):
             raise TypeError("O nome deve ser enviado em formato de texto!")
 
-        # Retira caracteres inválidos e transforma tudo em minúsculas para criar a base
-        novo_nome = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome).lower()
+        # Retira caracteres inválidos e transforma tudo em minúsculas para criar a base.
+        novo_nome = re.sub(r"[^a-zA-ZÀ-ÿ\s]", "", novo_nome).lower()
 
         if not novo_nome or len(novo_nome) < 6:
             raise ValueError("O nome da pessoa deve conter pelo menos 6 letras válidas!")
 
-        # Lista de exceções
-        excecoes = {'de', 'da', 'do', 'das', 'dos', 'a', 'e', 'o', 'as', 'os', 'em', 'por', 'para', 'com'}
+        # Lista de exceções.
+        excecoes = {"de", "da", "do", "das", "dos", "a", "e", "o", "as", "os", "em", "por", "para", "com"}
 
-        # Formatação inteligente usando List Comprehension
-        # Capitaliza a primeira palavra (índice 0) OU se a palavra NÃO estiver nas exceções
+        # Formatação inteligente usando List Comprehension.
+        # Capitaliza a primeira palavra (índice 0) OU se a palavra NÃO estiver nas exceções.
         palavras = [
             p.capitalize() if i == 0 or p not in excecoes else p
             for i, p in enumerate(novo_nome.split())
@@ -100,13 +100,13 @@ class Pessoa:
         if not novo_cpf.strip():
             raise ValueError("O campo CPF não pode estar vazio!")
 
-        # Higieniza o CPF, deixando apenas os dígitos
-        novo_cpf = re.sub(r'[^0-9]', '', novo_cpf)
+        # Higieniza o CPF, deixando apenas os dígitos.
+        novo_cpf = re.sub(r"[^0-9]", "", novo_cpf)
 
         if len(novo_cpf) != 11:
             raise ValueError(f"O CPF deve conter exatamente 11 números. Você enviou {len(novo_cpf)}!")
 
-        # Realiza verificação matemática e, caso todas as verificações sejam atendidas, atribui
+        # Realiza verificação matemática e, caso todas as verificações sejam atendidas, atribui.
         if validar_cpf(novo_cpf):
             self._cpf = novo_cpf
         else:
@@ -124,15 +124,16 @@ class Pessoa:
         if not isinstance(novo_telefone, str):
             raise TypeError("O telefone deve ser enviado em formato de texto!")
 
-        # Retira quaisquer coisas que não sejam dígitos (0-9)
-        novo_telefone = re.sub(r'[^0-9]', '', novo_telefone)
+        # Retira quaisquer coisas que não sejam dígitos (0-9).
+        novo_telefone = re.sub(r"[^0-9]", "", novo_telefone)
 
-        # Realiza verificação de tamanho mínimo e, caso todas as verificações sejam atendidas, atribui
+        # Realiza verificação de tamanho mínimo e, caso todas as verificações sejam atendidas, atribui.
         if len(novo_telefone) == 11:
             self._telefone = novo_telefone
         else:
             raise ValueError(
-                f"O telefone deve conter exatamente 11 números (com DDD)! Você enviou {len(novo_telefone)}.")
+                f"O telefone deve conter exatamente 11 números (com DDD)! Você enviou {len(novo_telefone)}."
+            )
 
 
     @property
@@ -146,11 +147,11 @@ class Pessoa:
         if not isinstance(novo_email, str):
             raise TypeError("O e-mail deve ser enviado em formato de texto!")
 
-        # Remove espaços em branco nas extremidades
+        # Remove espaços em branco nas extremidades.
         novo_email = novo_email.strip()
 
-        # Realiza verificação estrutural de elementos essenciais
-        # Caso todas as verificações sejam atendidas, atribui
+        # Realiza verificação estrutural de elementos essenciais.
+        # Caso todas as verificações sejam atendidas, atribui.
         if "@" in novo_email and "." in novo_email and " " not in novo_email:
             self._email = novo_email
         else:

@@ -1,8 +1,8 @@
 import re
 from typing import TYPE_CHECKING
 
-# Permite importar as classes estritamente para realizar o Type Hinting
-# Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real
+# Permite importar as classes estritamente para realizar o Type Hinting.
+# Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
     from cursos import Curso
     from matriculas import Matricula
@@ -18,10 +18,9 @@ class Graduacao:
 
         self.codigo_mec = codigo_mec
         self.nome = nome
-        self.qtd_semestres =\
-        qtd_semestres
+        self.qtd_semestres = qtd_semestres
 
-        # Inicializa o histórico como uma lista vazia de cursos (momento da criação)
+        # Inicializa o histórico como uma lista vazia de cursos (momento da criação).
         self._grade_curricular = []
 
 
@@ -35,10 +34,10 @@ class Graduacao:
         if not isinstance(novo_codigo, str):
             raise TypeError("O código MEC deve ser uma string!")
 
-        # Retira quaisquer coisas que não sejam dígitos (0-9)
-        novo_codigo = re.sub(r'[^0-9]', '', novo_codigo)
+        # Retira quaisquer coisas que não sejam dígitos (0-9).
+        novo_codigo = re.sub(r"[^0-9]", "", novo_codigo)
 
-        # Valida tamanho exato do argumento passado para código
+        # Valida tamanho exato do argumento passado para código.
         if not novo_codigo or len(novo_codigo) != 8:
             raise ValueError("O código MEC deve conter exatamente 8 dígitos numéricos!")
 
@@ -55,17 +54,17 @@ class Graduacao:
         if not isinstance(novo_nome, str):
             raise TypeError("O nome da graduação deve ser uma string!")
 
-        # Retira caracteres inválidos e transforma tudo em minúsculas para criar a base
-        novo_nome = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', novo_nome).lower()
+        # Retira caracteres inválidos e transforma tudo em minúsculas para criar a base.
+        novo_nome = re.sub(r"[^a-zA-ZÀ-ÿ\s]", "", novo_nome).lower()
 
         if not novo_nome or len(novo_nome) < 6:
             raise ValueError("O nome da graduação deve conter pelo menos 6 letras válidas!")
 
-        # Lista de exceções
-        excecoes = {'de', 'da', 'do', 'das', 'dos', 'a', 'e', 'o', 'as', 'os', 'em', 'por', 'para', 'com'}
+        # Lista de exceções.
+        excecoes = {"de", "da", "do", "das", "dos", "a", "e", "o", "as", "os", "em", "por", "para", "com"}
 
-        # Formatação inteligente usando List Comprehension
-        # Capitaliza a primeira palavra (índice 0) OU se a palavra NÃO estiver nas exceções
+        # Formatação inteligente usando List Comprehension.
+        # Capitaliza a primeira palavra (índice 0) OU se a palavra NÃO estiver nas exceções.
         palavras = [
             p.capitalize() if i == 0 or p not in excecoes else p
             for i, p in enumerate(novo_nome.split())
@@ -96,11 +95,11 @@ class Graduacao:
         return self._grade_curricular
 
 
-    # O uso de 'Curso' em formato de string (Forward Reference) na tipagem protege a IDE
-    def adicionar_disciplina(self, disciplina: 'Curso') -> None:
+    # O uso de "Curso" em formato de string (Forward Reference) na tipagem protege a IDE.
+    def adicionar_disciplina(self, disciplina: "Curso") -> None:
         """Insere um novo objeto Curso na lista da grade curricular."""
 
-        if disciplina.__class__.__name__ != 'Curso':
+        if disciplina.__class__.__name__ != "Curso":
             raise TypeError("Apenas objetos da classe Curso podem ser adicionados à grade curricular!")
 
         if disciplina in self.grade_curricular:
@@ -118,7 +117,7 @@ class Graduacao:
         return sum(curso.carga_horaria for curso in self.grade_curricular)
 
 
-    def verificar_elegibilidade_formatura(self, historico_aluno: 'list[Matricula]') -> bool:
+    def verificar_elegibilidade_formatura(self, historico_aluno: "list[Matricula]") -> bool:
         """Compara o histórico do aluno com a grade curricular para determinar se ele pode colar grau."""
 
         if not self.grade_curricular:
@@ -127,17 +126,17 @@ class Graduacao:
         if not historico_aluno:
             raise ValueError("ERRO: O aluno não possui histórico de disciplinas cursadas!")
 
-        # Extrai os nomes APENAS das disciplinas em que o aluno tem a situação "Aprovado"
-        # O uso de Set {} elimina duplicidades automaticamente e ignora reprovações passadas
+        # Extrai os nomes APENAS das disciplinas em que o aluno tem a situação "Aprovado".
+        # O uso de Set {} elimina duplicidades automaticamente e ignora reprovações passadas.
         disciplinas_aprovadas = {
             matricula.turma.curso.nome
             for matricula in historico_aluno
             if matricula.status == "Aprovado"
         }
 
-        # Varre a grade curricular da graduação
+        # Varre a grade curricular da graduação.
         for disciplina in self.grade_curricular:
-            # Se a disciplina exigida não estiver dentro da "bolsa" de disciplinas aprovadas do aluno, ele não forma
+            # Se a disciplina exigida não estiver dentro da "bolsa" de disciplinas aprovadas do aluno, ele não forma.
             if disciplina.nome not in disciplinas_aprovadas:
                 return False
 

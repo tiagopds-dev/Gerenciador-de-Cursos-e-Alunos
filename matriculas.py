@@ -2,7 +2,7 @@ import re
 from datetime import date
 from typing import TYPE_CHECKING
 
-# Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real
+# Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
     from alunos import Aluno
     from turmas import Turma
@@ -15,7 +15,7 @@ class Matricula:
     e atualiza a situação de aprovação com base nas regras do sistema.
     """
 
-    # Atributo de classe privado e imutável (tupla)
+    # Atributo de classe privado e imutável (tupla).
     _STATUS_VALIDOS = (
         "Cursando",
         "Trancada",
@@ -25,33 +25,33 @@ class Matricula:
         "Aprovado"
     )
 
-    def __init__(self, aluno: 'Aluno', turma: 'Turma') -> None:
+    def __init__(self, aluno: "Aluno", turma: "Turma") -> None:
 
-        # Validação estrita de tipo para evitar quebra de sistema
-        if aluno.__class__.__name__ != 'Aluno':
+        # Validação estrita de tipo para evitar quebra de sistema.
+        if aluno.__class__.__name__ != "Aluno":
             raise TypeError("O aluno vinculado deve ser um objeto válido da classe Aluno!")
 
-        if turma.__class__.__name__ != 'Turma':
+        if turma.__class__.__name__ != "Turma":
             raise TypeError("A turma vinculada deve ser um objeto válido da classe Turma!")
 
-        # Recebe os objetos associativos
+        # Recebe os objetos associativos.
         self.aluno = aluno
         self.turma = turma
 
-        # Inicializa as notas como um dicionário com chaves pré-definidas
+        # Inicializa as notas como um dicionário com chaves pré-definidas.
         self.notas = {
             'AV1': None,
             'AV2': None,
             'MF': None
         }
 
-        # Inicializa as horas frequentadas como zero
+        # Inicializa as horas frequentadas como zero.
         self._horas_frequentadas = 0
 
-        # Passa pelo setter para garantir que a situação inicial é válido
+        # Passa pelo setter para garantir que a situação inicial é válida.
         self.status = "Cursando"
 
-        # Registra esta matrícula na lista de matrículas ativas da turma
+        # Registra esta matrícula na lista de matrículas ativas da turma.
         self.turma.matriculas_ativas.append(self)
 
 
@@ -71,7 +71,7 @@ class Matricula:
     @property
     def frequencia(self) -> float:
         """Retorna o percentual de presença com base na carga horária da disciplina."""
-        # A carga horária da turma já está blindada contra valores nulos/negativos na classe Curso
+        # A carga horária da turma já está blindada contra valores nulos/negativos na classe Curso.
 
         percentual = (self._horas_frequentadas / self.turma.curso.carga_horaria) * 100
         return round(percentual, 2)
@@ -89,7 +89,8 @@ class Matricula:
 
         if novo_status not in Matricula._STATUS_VALIDOS:
             raise ValueError(
-                f"Status '{novo_status}' inválido! Os status permitidos são: {', '.join(Matricula._STATUS_VALIDOS)}.")
+                f"Status '{novo_status}' inválido! Os status permitidos são: {', '.join(Matricula._STATUS_VALIDOS)}."
+            )
 
         self._status = novo_status
 
@@ -106,8 +107,8 @@ class Matricula:
         if not nome_nota.strip():
             raise ValueError("O nome da avaliação não pode estar vazio!")
 
-        # Higieniza a string passada como nome da nota
-        nome_nota_limpa = re.sub(r'[^a-zA-Z0-9]', '', nome_nota).upper()
+        # Higieniza a string passada como nome da nota.
+        nome_nota_limpa = re.sub(r"[^a-zA-Z0-9]", "", nome_nota).upper()
 
         if nome_nota_limpa not in ["AV1", "AV2"]:
             raise ValueError(f"Nome de avaliação inválido ('{nome_nota_limpa}'). Utilize 'AV1' ou 'AV2'.")
@@ -115,13 +116,13 @@ class Matricula:
         if nota < 0 or nota > 10:
             raise ValueError(f"Nota inválida ({nota}). A nota deve ser um valor entre 0 e 10.")
 
-        # Caso todas as validações sejam atendidas, a nota é adicionada
+        # Caso todas as validações sejam atendidas, a nota é adicionada.
         self.notas[nome_nota_limpa] = float(nota)
 
-        # Faz o recálculo inteligente da média somente após as duas notas terem sido adicionadas
+        # Faz o recálculo inteligente da média somente após as duas notas terem sido adicionadas.
         av1, av2 = self.notas['AV1'], self.notas['AV2']
 
-        # Se nenhuma for nula, calcula a média
+        # Se nenhuma for nula, calcula a média.
         if av1 is not None and av2 is not None:
             self.notas['MF'] = round((av1 + av2) / 2, 2)
 
@@ -139,26 +140,27 @@ class Matricula:
 
         if horas_totais > carga_total_curso:
             raise ValueError(
-                f"Limite excedido!"
-                f" As horas frequentadas ({horas_totais}h) não podem ser maiores que a carga horária total da disciplina ({carga_total_curso}h).")
+                f"Limite excedido! "
+                f"As horas frequentadas ({horas_totais}h) não podem ser maiores que a carga horária total da disciplina ({carga_total_curso}h)."
+            )
 
         self._horas_frequentadas += horas
 
-    def atualizar_situacao(self, regras: 'Configuracao') -> None:
+    def atualizar_situacao(self, regras: "Configuracao") -> None:
         """Calcula a situação final do aluno com base nas notas, frequência e regras vigentes."""
 
-        if regras.__class__.__name__ != 'Configuracao':
+        if regras.__class__.__name__ != "Configuracao":
             raise TypeError("As regras devem ser um objeto válido da classe Configuracao!")
 
         if self.status == "Trancada":
             raise ValueError(f"O aluno {self.aluno.nome} possui a matrícula trancada e não é elegível à consolidação final.")
 
-        # Se a MF for None (aluno abandonou/não fez provas), 0.0 é assumido para o cálculo
+        # Se a MF for None (aluno abandonou/não fez provas), 0.0 é assumido para o cálculo.
         nota_final = self.notas.get('MF')
         if nota_final is None:
             nota_final = 0.0
 
-        # Avaliação das regras de negócio para verificação situacional do aluno
+        # Avaliação das regras de negócio para verificação situacional do aluno.
         reprovado_falta = self.frequencia < regras.frequencia_minima_aprovacao
         reprovado_nota = nota_final < regras.nota_minima_aprovacao
 
@@ -171,10 +173,10 @@ class Matricula:
         else:
             self.status = "Aprovado"
 
-    def trancar_matricula(self, regras: 'Configuracao') -> None:
+    def trancar_matricula(self, regras: "Configuracao") -> None:
         """Valida e processa a desistência da disciplina dentro do prazo estipulado."""
 
-        if regras.__class__.__name__ != 'Configuracao':
+        if regras.__class__.__name__ != "Configuracao":
             raise TypeError("As regras devem ser um objeto válido da classe Configuracao!")
 
         if self.status == "Trancada":
@@ -183,19 +185,21 @@ class Matricula:
         if self.status != "Cursando":
             raise ValueError(
                 f"Não é possível trancar a matrícula. "
-                f"O status atual é '{self.status}', indicando que a disciplina já foi encerrada para este aluno.")
+                f"O status atual é '{self.status}', indicando que a disciplina já foi encerrada para este aluno."
+            )
 
-        # Captura a data atual do sistema para comparar com a data limite
+        # Captura a data atual do sistema para comparar com a data limite.
         data_atual = date.today()
 
         if data_atual > regras.data_limite_trancamento:
-            # Formata a data (DD/MM/AAAA) para exibir na mensagem de erro amigável
+            # Formata a data (DD/MM/AAAA) para exibir na mensagem de erro amigável.
             raise ValueError(
-                f"Período de trancamento encerrado! A data limite era {regras.data_limite_trancamento.strftime('%d/%m/%Y')}.")
+                f"Período de trancamento encerrado! A data limite era {regras.data_limite_trancamento.strftime('%d/%m/%Y')}."
+            )
 
-        # Tranca a matrícula
+        # Tranca a matrícula.
         self.status = "Trancada"
 
-        # Remove o aluno da lista de matrículas ativas da turma de forma segura
+        # Remove o aluno da lista de matrículas ativas da turma de forma segura.
         if self in self.turma.matriculas_ativas:
             self.turma.matriculas_ativas.remove(self)
