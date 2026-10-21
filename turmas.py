@@ -51,11 +51,13 @@ class Turma(Oferta):
         # Adiciona a turma criada no histórico de turmas ofertadas do curso correspondente
         self.curso.vincular_turma(self)
 
+
     # Como o ID da turma será gerado sempre de forma automática, não será criado um setter
     # Dessa forma, não haverá como alterar o ID da turma após a criação (apenas leitura)
     @property
     def id_turma(self):
         return self._id_turma
+
 
     # Permite leitura e modificações internas na lista (ex: .append),
     # mas a ausência do Setter impede a substituição acidental de todo o histórico de matrículas ativas
@@ -63,9 +65,11 @@ class Turma(Oferta):
     def matriculas_ativas(self):
         return self._matriculas_ativas
 
+
     @property
     def status(self):
         return self._status
+
 
     @status.setter
     def status(self, novo_status: str):
@@ -78,6 +82,7 @@ class Turma(Oferta):
             raise ValueError(f"Status inválido ('{novo_status}')! A turma só pode estar 'Aberta' ou 'Fechada'.")
 
         self._status = novo_status
+
 
     def abrir_turma(self, configuracao: 'Configuracao') -> None:
         """Altera a situação da turma para 'Aberta'."""
@@ -102,6 +107,7 @@ class Turma(Oferta):
         # Se todas as verificações forem atendidas, a turma será aberta
         self.status = "Aberta"
 
+
     def fechar_turma(self) -> None:
         """Altera a situação da turma para 'Fechada', impedindo novas matrículas."""
 
@@ -123,6 +129,7 @@ class Turma(Oferta):
 
         # Se todas as verificações forem atendidas, a turma será fechada
         self.status = "Fechada"
+
 
     def verificar_choque_horario(self, outra_turma: 'Turma') -> bool:
         """Verifica se os horários desta turma conflitam com os de uma turma já matriculada."""

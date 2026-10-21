@@ -14,9 +14,11 @@ class Oferta:
         self.vagas = vagas
         self.local = local
 
+
     @property
     def periodo(self):
         return self._periodo
+
 
     @periodo.setter
     def periodo(self, novo_periodo: str):
@@ -52,9 +54,11 @@ class Oferta:
         # Segue com a atribuição se todas as verificações foram atendidas
         self._periodo = novo_periodo
 
+
     @property
     def dias_horarios(self):
         return self._dias_horarios
+
 
     @dias_horarios.setter
     def dias_horarios(self, novo_dias_horarios: dict):
@@ -68,9 +72,11 @@ class Oferta:
 
         self._dias_horarios = novo_dias_horarios
 
+
     @property
     def vagas(self):
         return self._vagas
+
 
     @vagas.setter
     def vagas(self, novas_vagas: int):
@@ -84,9 +90,11 @@ class Oferta:
 
         self._vagas = novas_vagas
 
+
     @property
     def local(self):
         return self._local
+
 
     @local.setter
     def local(self, novo_local: str):

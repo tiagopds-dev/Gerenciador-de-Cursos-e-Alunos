@@ -37,11 +37,13 @@ class Aluno(Pessoa):
         # Passa pelo setter para garantir que o objeto passado pertence à classe Graduacao
         self.graduacao = graduacao
 
+
     # Como a matrícula será gerada sempre de forma automática, não será criado um setter
     # Dessa forma, não haverá como alterar a matrícula após a criação (apenas leitura)
     @property
     def matricula(self):
         return self._matricula
+
 
     # Permite leitura e modificações internas na lista (ex: .append),
     # mas a ausência do Setter impede a substituição acidental de todo o histórico
@@ -49,9 +51,11 @@ class Aluno(Pessoa):
     def historico(self):
         return self._historico
 
+
     @property
     def graduacao(self):
         return self._graduacao
+
 
     @graduacao.setter
     def graduacao(self, nova_graduacao: 'Graduacao'):
@@ -63,6 +67,7 @@ class Aluno(Pessoa):
 
         # Caso pertença, realiza a atribuição segura
         self._graduacao = nova_graduacao
+
 
     # Usa o decorador para garantir que o Coeficiente não fique desatualizado, fique blindado contra edição
     # e tenha uma sintaxe de utilização limpa
@@ -90,6 +95,7 @@ class Aluno(Pessoa):
 
         # Retorna o valor arredondado para duas casas decimais
         return round(cr, 2)
+
 
     # Adicionado Type Hinting na assinatura ('Aluno')
     def __lt__(self, other: 'Aluno'):
