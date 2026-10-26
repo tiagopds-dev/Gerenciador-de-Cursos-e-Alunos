@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from alunos import Aluno
     from turmas import Turma
-    from config import Configuracao
+    from config.config import Configuracao
 
 
 class Matricula:

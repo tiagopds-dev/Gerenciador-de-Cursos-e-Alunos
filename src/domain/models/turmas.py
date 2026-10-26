@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
     from cursos import Curso
-    from config import Configuracao
+    from config.config import Configuracao
 
 
 class Turma(Oferta):

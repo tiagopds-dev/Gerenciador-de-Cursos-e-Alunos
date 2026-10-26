@@ -1,7 +1,7 @@
-from graduacoes import Graduacao
-from cursos import Curso
-from alunos import Aluno
-from turmas import Turma
+from src.domain.models.graduacoes import Graduacao
+from src.domain.models.cursos import Curso
+from src.domain.models.alunos import Aluno
+from src.domain.models.turmas import Turma
 
 
 class Sistema:
