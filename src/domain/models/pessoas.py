@@ -1,46 +1,5 @@
 import re
 
-def validar_cpf(cpf: str) -> bool:
-    """
-    Função responsável por realizar a "limpeza" e validação do CPF digitado,
-    removendo qualquer coisa que não seja um dígito (0-9), impedindo CPFs como "00000000000",
-    verificando o tamanho do CPF digitado e executando verificação matemática de dígitos verificadores.
-    """
-
-    # Retira quaisquer coisas que não sejam dígitos (0-9).
-    cpf = re.sub(r"[^0-9]", "", cpf)
-
-    # Barra CPFs como "00000000000", "11111111111", "22222222222", etc.
-    if len(set(cpf)) == 1:
-        return False
-
-    # Verifica o tamanho exato do CPF digitado.
-    if len(cpf) != 11:
-        return False
-
-    # Validação matemática do 1º dígito verificador.
-    dig_veri_1 = sum(int(cpf[i]) * (10 - i) for i in range(9))
-    dig_veri_1 = (dig_veri_1 * 10) % 11
-
-    if dig_veri_1 == 10 or dig_veri_1 == 11:
-        dig_veri_1 = 0
-
-    if str(dig_veri_1) != cpf[9]:
-        return False
-
-    # Validação matemática do 2º dígito verificador.
-    dig_veri_2 = sum(int(cpf[i]) * (11 - i) for i in range(10))
-    dig_veri_2 = (dig_veri_2 * 10) % 11
-
-    if dig_veri_2 == 10 or dig_veri_2 == 11:
-        dig_veri_2 = 0
-
-    if str(dig_veri_2) != cpf[10]:
-        return False
-
-    # Valida o CPF caso tenha passado por todas as verificações.
-    return True
-
 # Construção da classe.
 class Pessoa:
     """
@@ -107,7 +66,7 @@ class Pessoa:
             raise ValueError(f"O CPF deve conter exatamente 11 números. Você enviou {len(novo_cpf)}!")
 
         # Realiza verificação matemática e, caso todas as verificações sejam atendidas, atribui.
-        if validar_cpf(novo_cpf):
+        if self.__validar_cpf(novo_cpf):
             self._cpf = novo_cpf
         else:
             raise ValueError("O CPF informado possui dígitos verificadores incorretos!")
@@ -156,3 +115,44 @@ class Pessoa:
             self._email = novo_email
         else:
             raise ValueError("O formato do e-mail é inválido. Certifique-se de usar '@', '.' e não incluir espaços!")
+
+    def __validar_cpf(self, cpf: str) -> bool:
+        """
+        Função responsável por realizar a "limpeza" e validação do CPF digitado,
+        removendo qualquer coisa que não seja um dígito (0-9), impedindo CPFs como "00000000000",
+        verificando o tamanho do CPF digitado e executando verificação matemática de dígitos verificadores.
+        """
+
+        # Retira quaisquer coisas que não sejam dígitos (0-9).
+        cpf = re.sub(r"[^0-9]", "", cpf)
+
+        # Barra CPFs como "00000000000", "11111111111", "22222222222", etc.
+        if len(set(cpf)) == 1:
+            return False
+
+        # Verifica o tamanho exato do CPF digitado.
+        if len(cpf) != 11:
+            return False
+
+        # Validação matemática do 1º dígito verificador.
+        dig_veri_1 = sum(int(cpf[i]) * (10 - i) for i in range(9))
+        dig_veri_1 = (dig_veri_1 * 10) % 11
+
+        if dig_veri_1 == 10 or dig_veri_1 == 11:
+            dig_veri_1 = 0
+
+        if str(dig_veri_1) != cpf[9]:
+            return False
+
+        # Validação matemática do 2º dígito verificador.
+        dig_veri_2 = sum(int(cpf[i]) * (11 - i) for i in range(10))
+        dig_veri_2 = (dig_veri_2 * 10) % 11
+
+        if dig_veri_2 == 10 or dig_veri_2 == 11:
+            dig_veri_2 = 0
+
+        if str(dig_veri_2) != cpf[10]:
+            return False
+
+        # Valida o CPF caso tenha passado por todas as verificações.
+        return True
