@@ -65,8 +65,8 @@ class Sistema:
         return self._graduacoes
 
 
-    def cadastrar_aluno(self, nome: str, cpf: str, telefone: str, email: str, graduacao: Graduacao) -> None:
-        """Adiciona um novo aluno à lista geral de alunos matriculados na instituição."""
+    def cadastrar_aluno(self, nome: str, cpf: str, telefone: str, email: str, graduacao: Graduacao) -> Aluno:
+        """Adiciona um novo aluno à lista geral de alunos matriculados na instituição e retorna a instância."""
 
         # Verifica se a graduação pretendida pelo aluno consta nos registros do sistema.
         if graduacao not in self._graduacoes:
@@ -78,9 +78,11 @@ class Sistema:
         # Registra o novo aluno na coleção em memória do sistema.
         self._alunos.append(novo_aluno)
 
+        return novo_aluno
 
-    def cadastrar_graduacao(self, codigo_mec: str, nome: str, qtd_semestres: int) -> None:
-        """Adiciona um novo curso superior à lista de graduações ofertadas pela instituição."""
+
+    def cadastrar_graduacao(self, codigo_mec: str, nome: str, qtd_semestres: int) -> Graduacao:
+        """Adiciona um novo curso superior à lista de graduações ofertadas pela instituição e retorna a instância."""
 
         # Instancia a nova graduação validando código MEC, nome e duração.
         nova_graduacao = Graduacao(codigo_mec, nome, qtd_semestres)
@@ -88,9 +90,11 @@ class Sistema:
         # Registra a nova graduação na coleção em memória do sistema.
         self._graduacoes.append(nova_graduacao)
 
+        return nova_graduacao
 
-    def cadastrar_curso(self, nome: str, carga_horaria: int, pre_requisitos: list, ementa: str, graduacao: Graduacao) -> None:
-        """Adiciona um novo curso (disciplina) ao catálogo disponível do sistema."""
+
+    def cadastrar_curso(self, nome: str, carga_horaria: int, pre_requisitos: list, ementa: str, graduacao: Graduacao) -> Curso:
+        """Adiciona um novo curso (disciplina) ao catálogo disponível do sistema e retorna a instância."""
 
         # Impede o cadastro de disciplinas em graduações inexistentes no sistema.
         if graduacao not in self._graduacoes:
@@ -105,9 +109,11 @@ class Sistema:
         # Adiciona a disciplina ao catálogo geral de cursos do sistema.
         self._cursos.append(novo_curso)
 
+        return novo_curso
 
-    def abrir_turma(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: Curso) -> None:
-        """Adiciona uma nova oferta de turma à lista de turmas ativas."""
+
+    def abrir_turma(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: Curso) -> Turma:
+        """Adiciona uma nova oferta de turma à lista de turmas ativas e retorna a instância."""
 
         # Garante que o curso ofertado pertença ao catálogo oficial do sistema.
         if curso not in self._cursos:
@@ -119,9 +125,11 @@ class Sistema:
         # Registra a nova oferta na lista geral de turmas do sistema.
         self._turmas.append(nova_turma)
 
+        return nova_turma
 
-    def realizar_matricula(self, aluno: Aluno, turma: Turma) -> None:
-        """Localiza as instâncias e realiza as validações (choque, vagas, pré-requisitos) para criar uma Matrícula."""
+
+    def realizar_matricula(self, aluno: Aluno, turma: Turma) -> Matricula:
+        """Localiza as instâncias, realiza as validações e retorna o vínculo de Matrícula criado."""
 
         # Verifica se o aluno informado pertence aos registros ativos da instituição.
         if aluno not in self._alunos:
@@ -177,14 +185,10 @@ class Sistema:
         if any(turma.verificar_choque_horario(disciplina) for disciplina in disciplinas_ativas):
             raise ValueError(f"Choque de horário detectado entre a turma '{turma.id_turma}' e uma disciplina em curso!")
 
-        # Superadas todas as validações, instancia o vínculo oficial de matrícula.
+        # Superadas todas as validações, instancia o vínculo oficial de matrícula (auto-registrado no construtor).
         nova_matricula = Matricula(aluno, turma)
 
-        # Registra a matrícula na lista de ocupação da turma.
-        turma.matriculas_ativas.append(nova_matricula)
-
-        # Registra a matrícula no histórico acadêmico do aluno.
-        aluno.historico.append(nova_matricula)
+        return nova_matricula
 
 
     def salvar_estado(self) -> None:
