@@ -4,20 +4,24 @@ from typing import TYPE_CHECKING
 # Permite importar as classes estritamente para realizar o Type Hinting.
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
-    from cursos import Curso
-    from matriculas import Matricula
+    from src.domain.models.cursos import Curso
+    from src.domain.models.matriculas import Matricula
 
 
+# Construção da classe.
 class Graduacao:
     """
     Representa o curso superior do mundo real.
     Atua como um agrupador lógico, guardando a grade curricular de disciplinas exigidas.
     """
 
+
     def __init__(self, codigo_mec: str, nome: str, qtd_semestres: int) -> None:
 
         self.codigo_mec = codigo_mec
+
         self.nome = nome
+
         self.qtd_semestres = qtd_semestres
 
         # Inicializa o histórico como uma lista vazia de cursos (momento da criação).
@@ -31,6 +35,7 @@ class Graduacao:
 
     @codigo_mec.setter
     def codigo_mec(self, novo_codigo: str):
+
         if not isinstance(novo_codigo, str):
             raise TypeError("O código MEC deve ser uma string!")
 
@@ -50,7 +55,8 @@ class Graduacao:
 
 
     @nome.setter
-    def nome(self, novo_nome):
+    def nome(self, novo_nome: str):
+
         if not isinstance(novo_nome, str):
             raise TypeError("O nome da graduação deve ser uma string!")
 
@@ -95,7 +101,7 @@ class Graduacao:
         return self._grade_curricular
 
 
-    # O uso de "Curso" em formato de string (Forward Reference) na tipagem protege a IDE.
+    # O uso de 'Curso' em formato de string (Forward Reference) na tipagem protege a IDE.
     def adicionar_disciplina(self, disciplina: "Curso") -> None:
         """Insere um novo objeto Curso na lista da grade curricular."""
 
@@ -103,7 +109,7 @@ class Graduacao:
             raise TypeError("Apenas objetos da classe Curso podem ser adicionados à grade curricular!")
 
         if disciplina in self.grade_curricular:
-            raise ValueError(f"ERRO: {disciplina.nome} já faz parte da grade de {self.nome}!")
+            raise ValueError(f"ERRO: '{disciplina.nome}' já faz parte da grade de '{self.nome}'!")
 
         self.grade_curricular.append(disciplina)
 
@@ -112,7 +118,7 @@ class Graduacao:
         """Varre a grade curricular somando a carga horária de todos os cursos vinculados."""
 
         if not self.grade_curricular:
-            raise ValueError(f"ERRO: {self.nome} não possui disciplinas cadastradas!")
+            raise ValueError(f"ERRO: '{self.nome}' não possui disciplinas cadastradas!")
 
         return sum(curso.carga_horaria for curso in self.grade_curricular)
 
@@ -121,12 +127,12 @@ class Graduacao:
         """Compara o histórico do aluno com a grade curricular para determinar se ele pode colar grau."""
 
         if not self.grade_curricular:
-            raise ValueError(f"ERRO: A graduação {self.nome} não possui disciplinas cadastradas na grade!")
+            raise ValueError(f"ERRO: A graduação '{self.nome}' não possui disciplinas cadastradas na grade!")
 
         if not historico_aluno:
             raise ValueError("ERRO: O aluno não possui histórico de disciplinas cursadas!")
 
-        # Extrai os nomes APENAS das disciplinas em que o aluno tem a situação "Aprovado".
+        # Extrai os nomes APENAS das disciplinas em que o aluno tem a situação 'Aprovado'.
         # O uso de Set {} elimina duplicidades automaticamente e ignora reprovações passadas.
         disciplinas_aprovadas = {
             matricula.turma.curso.nome
@@ -136,7 +142,8 @@ class Graduacao:
 
         # Varre a grade curricular da graduação.
         for disciplina in self.grade_curricular:
-            # Se a disciplina exigida não estiver dentro da "bolsa" de disciplinas aprovadas do aluno, ele não forma.
+
+            # Se a disciplina exigida não estiver dentro do conjunto de disciplinas aprovadas do aluno, ele não forma.
             if disciplina.nome not in disciplinas_aprovadas:
                 return False
 

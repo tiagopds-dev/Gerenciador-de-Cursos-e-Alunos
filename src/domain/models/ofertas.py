@@ -1,17 +1,22 @@
 from datetime import date
 
 
+# Construção da classe.
 class Oferta:
     """
     Classe base que abstrai o conceito de algo sendo oferecido no tempo e espaço,
     contendo o período letivo, horários, local e limite de vagas.
     """
 
-    # Construção da classe.
+
     def __init__(self, periodo: str, dias_horarios: dict, vagas: int, local: str) -> None:
+
         self.periodo = periodo
+
         self.dias_horarios = dias_horarios
+
         self.vagas = vagas
+
         self.local = local
 
 
@@ -27,33 +32,36 @@ class Oferta:
         if not isinstance(novo_periodo, str):
             raise TypeError("O período deve ser enviado em formato de texto (ex: '2026.1')!")
 
-        # Valida tamanho exato do formato definido para período.
+        # Valida o tamanho exato do formato definido para período.
         if len(novo_periodo) != 6:
             raise ValueError(
-                f"O formato do período é inválido. "
-                f"Esperado 6 caracteres (AAAA.S), mas recebeu {len(novo_periodo)} ('{novo_periodo}')."
+                f"O formato do período é inválido! "
+                f"Esperado 6 caracteres ('AAAA.S'), mas recebeu {len(novo_periodo)} ('{novo_periodo}')."
             )
 
         # Garante que os 4 primeiros caracteres são numéricos antes de tentar converter para inteiro.
         ano_str = novo_periodo[0:4]
+
         if not ano_str.isdigit():
-            raise ValueError(f"O ano do período deve conter apenas números. Valor recebido: '{ano_str}'.")
+            raise ValueError(f"O ano do período deve conter apenas números! Valor recebido: '{ano_str}'.")
 
         # Valida se o ano do período fornecido se encontra dentro do intervalo aceitável.
         ano_atual = date.today().year
+
         datas_validas = [ano_atual - 1, ano_atual, ano_atual + 1]
 
         if int(ano_str) not in datas_validas:
             raise ValueError(
-                f"O ano do período ({ano_str}) está fora do limite permitido! "
+                f"O ano do período ('{ano_str}') está fora do limite permitido! "
                 f"Anos válidos: {datas_validas[0]}, {datas_validas[1]} ou {datas_validas[2]}."
             )
 
-        # Valida se o "semestre" fornecido no período está conforme o padrão.
+        # Valida se o semestre fornecido no período está conforme o padrão.
         semestre_str = novo_periodo[4:6]
+
         if semestre_str not in [".1", ".2"]:
             raise ValueError(
-                f"O identificador de semestre ('{semestre_str}') é inválido. Utilize obrigatoriamente '.1' ou '.2'."
+                f"O identificador de semestre ('{semestre_str}') é inválido! Utilize obrigatoriamente '.1' ou '.2'."
             )
 
         # Segue com a atribuição se todas as verificações foram atendidas.
@@ -91,7 +99,7 @@ class Oferta:
 
         # Garante que a atribuição será feita apenas se a quantidade de vagas for positiva.
         if novas_vagas <= 0:
-            raise ValueError(f"O número de vagas deve ser maior que zero. Valor recebido: {novas_vagas}.")
+            raise ValueError(f"O número de vagas deve ser maior que zero! Valor recebido: {novas_vagas}.")
 
         self._vagas = novas_vagas
 
@@ -107,7 +115,7 @@ class Oferta:
         if not isinstance(novo_local, str):
             raise TypeError("O local da oferta deve ser enviado em formato de texto!")
 
-        # Valida tamanho exato do formato definido para local.
+        # Valida o tamanho mínimo do formato definido para local.
         if not novo_local.strip() or len(novo_local) < 4:
             raise ValueError("O nome do local deve conter pelo menos 4 letras válidas!")
 

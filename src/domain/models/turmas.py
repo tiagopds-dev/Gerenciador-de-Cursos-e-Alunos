@@ -1,15 +1,15 @@
 import re
-
-from ofertas import Oferta
 from typing import TYPE_CHECKING
+from src.domain.models.ofertas import Oferta
 
 # Permite importar as classes estritamente para realizar o Type Hinting.
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
-    from cursos import Curso
+    from src.domain.models.cursos import Curso
     from config.config import Configuracao
 
 
+# Construção da classe.
 class Turma(Oferta):
     """
     Herda de Oferta e concretiza a oferta de um Curso específico em um semestre.
@@ -20,7 +20,9 @@ class Turma(Oferta):
     # Pertence à classe Turma, assim, não é reinicializado a cada novo objeto.
     _contador_turma = 1
 
+
     def __init__(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: "Curso") -> None:
+
         # Chama o construtor da superclasse Oferta para validar e atribuir os dados base.
         super().__init__(periodo, dias_horarios, vagas, local)
 
@@ -33,7 +35,7 @@ class Turma(Oferta):
 
         # Gera um ID de turma automático utilizando um padrão pré-estabelecido.
         # (Período da turma + Identificador único da turma).
-        # ":02d" força o número a ter 2 casas, preenchendo com zeros à esquerda.
+        # ':02d' força o número a ter 2 casas, preenchendo com zeros à esquerda.
         self._id_turma = f"{periodo_limpo}{Turma._contador_turma:02d}"
 
         # Incrementa o contador da classe para a próxima turma que for criada.
@@ -45,7 +47,7 @@ class Turma(Oferta):
         # Atribui o curso como atributo vinculado diretamente a uma turma.
         self.curso = curso
 
-        # Define automaticamente a condição de "aberta" para uma turma recém-criada.
+        # Define automaticamente a condição de 'Aberta' para uma turma recém-criada.
         self.status = "Aberta"
 
         # Adiciona a turma criada no histórico de turmas ofertadas do curso correspondente.
@@ -92,19 +94,19 @@ class Turma(Oferta):
 
         # Proíbe alteração de condição caso turma já esteja aberta.
         if self.status == "Aberta":
-            raise ValueError(f"A turma {self.id_turma} já se encontra Aberta!")
+            raise ValueError(f"A turma '{self.id_turma}' já se encontra Aberta!")
 
         # Barra a alteração de condição caso a turma já esteja fechada e cheia.
         if self.status == "Fechada" and len(self.matriculas_ativas) >= self.vagas:
             raise ValueError(
-                f"Não é possível reabrir a turma {self.id_turma}: o limite de {self.vagas} vagas já foi atingido!"
+                f"Não é possível reabrir a turma '{self.id_turma}': o limite de {self.vagas} vagas já foi atingido!"
             )
 
         # Impede a alteração de condição caso o período fornecido seja anterior ao período atual.
         if self.periodo < configuracao.semestre_vigente:
             raise ValueError(
-                f"Não é possível abrir uma turma de um período passado ({self.periodo})! "
-                f"O semestre vigente é {configuracao.semestre_vigente}."
+                f"Não é possível abrir uma turma de um período passado ('{self.periodo}')! "
+                f"O semestre vigente é '{configuracao.semestre_vigente}'."
             )
 
         # Se todas as verificações forem atendidas, a turma será aberta.
@@ -116,20 +118,20 @@ class Turma(Oferta):
 
         # Proíbe alteração de condição caso turma já esteja fechada.
         if self.status == "Fechada":
-            raise ValueError(f"A turma {self.id_turma} já se encontra Fechada!")
+            raise ValueError(f"A turma '{self.id_turma}' já se encontra Fechada!")
 
         # Barra a alteração de condição caso o número mínimo de matrículas ativas não tenha sido atingido.
         if len(self.matriculas_ativas) < 5:
             raise ValueError(
-                f"A turma {self.id_turma} não atingiu o quórum mínimo de 5 alunos (Atuais: {len(self.matriculas_ativas)})!"
+                f"A turma '{self.id_turma}' não atingiu o quórum mínimo de 5 alunos (Atuais: {len(self.matriculas_ativas)})!"
             )
 
         # Impede o fechamento se houver matrículas não consolidadas.
         if any(matricula.status == "Cursando" for matricula in self.matriculas_ativas):
-                raise ValueError(
-                    f"Não é possível fechar a turma {self.id_turma}. "
-                    f"Ainda há alunos com o status 'Cursando'!"
-                )
+            raise ValueError(
+                f"Não é possível fechar a turma '{self.id_turma}'. "
+                f"Ainda há alunos com o status 'Cursando'!"
+            )
 
         # Se todas as verificações forem atendidas, a turma será fechada.
         self.status = "Fechada"

@@ -1,13 +1,14 @@
-from pessoas import Pessoa
 from datetime import date
 from typing import TYPE_CHECKING
+from src.domain.models.pessoas import Pessoa
 
 # Permite importar as classes estritamente para realizar o Type Hinting.
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
-    from graduacoes import Graduacao
+    from src.domain.models.graduacoes import Graduacao
 
 
+# Construção da classe.
 class Aluno(Pessoa):
     """
     Especializa a classe Pessoa, adicionando uma matrícula única, o vínculo com a sua
@@ -18,14 +19,15 @@ class Aluno(Pessoa):
     # Pertence à classe Aluno, assim, não é reinicializado a cada novo objeto.
     _contador_alunos = 1
 
-    # Construção da classe.
+
     def __init__(self, nome: str, cpf: str, telefone: str, email: str, graduacao: "Graduacao") -> None:
-        # Chama o construtor da classe Base (Pessoa) para validar e salvar os dados básicos.
+
+        # Chama o construtor da classe base (Pessoa) para validar e salvar os dados básicos.
         super().__init__(nome, cpf, telefone, email)
 
         # Gera a matrícula automática utilizando um padrão pré-estabelecido (com base na UFCA).
         # (Ano atual + 00 + Identificador único do aluno).
-        # ":04d" força o número a ter 4 casas, preenchendo com zeros à esquerda.
+        # ':04d' força o número a ter 4 casas, preenchendo com zeros à esquerda.
         self._matricula = f"{date.today().year}00{Aluno._contador_alunos:04d}"
 
         # Incrementa o contador da classe para o próximo aluno que for criado.
@@ -63,7 +65,7 @@ class Aluno(Pessoa):
         # Verifica se o objeto passado realmente pertence à classe Graduacao.
         # (Substitui o isinstance para evitar erro com o TYPE_CHECKING em execução real).
         if nova_graduacao.__class__.__name__ != "Graduacao":
-            raise TypeError("A graduação deve ser um objeto válido da classe Graduacao!")
+            raise TypeError("A graduação deve ser um objeto válido da classe 'Graduacao'!")
 
         # Caso pertença, realiza a atribuição segura.
         self._graduacao = nova_graduacao
@@ -75,15 +77,16 @@ class Aluno(Pessoa):
     def cr(self) -> float:
         """Calcula o coeficiente de rendimento/média ponderada com base nas disciplinas concluídas."""
 
-        # Cria uma lista apenas com as matrículas do histórico que já foram concluídas (MF consolidada).
-        turmas_concluidas = [matricula for matricula in self.historico if matricula.notas['MF'] is not None]
+        # Cria uma lista apenas com as matrículas do histórico que já foram concluídas ('MF' consolidada).
+        turmas_concluidas = [matricula for matricula in self.historico if matricula.notas["MF"] is not None]
 
-        # Caso o histórico de disciplinas concluídas esteja vazio (ex.: calouro), atribui diretamente 0.0.
+        # Caso o histórico de disciplinas concluídas esteja vazio (ex: calouro), atribui diretamente 0.0.
         if not turmas_concluidas:
             return 0.0
 
         # Cálculo da Média Ponderada: (Soma de Notas * Carga Horária) / Carga Horária Total Cursada.
-        soma_ponderada = sum(mat.notas['MF'] * mat.turma.curso.carga_horaria for mat in turmas_concluidas)
+        soma_ponderada = sum(mat.notas["MF"] * mat.turma.curso.carga_horaria for mat in turmas_concluidas)
+
         carga_horaria_total = sum(mat.turma.curso.carga_horaria for mat in turmas_concluidas)
 
         # Medida de segurança contra divisão por zero.
@@ -97,8 +100,8 @@ class Aluno(Pessoa):
         return round(cr, 2)
 
 
-    # Adicionado Type Hinting na assinatura ("Aluno").
-    def __lt__(self, other: "Aluno"):
+    # Adicionado Type Hinting na assinatura ('Aluno').
+    def __lt__(self, other: "Aluno") -> bool:
         """
         Método especial que possibilita a comparação e, consequentemente, a ordenação de CRs.
         Base para o cálculo do ranking de alunos.

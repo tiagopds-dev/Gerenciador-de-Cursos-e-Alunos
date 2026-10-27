@@ -4,35 +4,38 @@ from typing import TYPE_CHECKING
 # Permite importar as classes estritamente para realizar o Type Hinting.
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
-    from turmas import Turma
-    from graduacoes import Graduacao
+    from src.domain.models.turmas import Turma
+    from src.domain.models.graduacoes import Graduacao
 
 
+# Construção da classe.
 class Curso:
     """
     Representa a disciplina na sua essência. Guarda a ementa, carga horária
     e a lista de pré-requisitos necessários para ser cursada.
     """
 
-    def __init__(self, nome: str, carga_horaria: int, pre_requisitos: list, ementa: str,
-                 graduacao: "Graduacao") -> None:
+
+    def __init__(self, nome: str, carga_horaria: int, pre_requisitos: list, ementa: str, graduacao: "Graduacao") -> None:
 
         # Validação e associação da dependência principal (Graduação).
         if graduacao.__class__.__name__ != "Graduacao":
-            raise TypeError("A graduação vinculada deve ser um objeto válido da classe Graduacao!")
+            raise TypeError("A graduação vinculada deve ser um objeto válido da classe 'Graduacao'!")
+
         self.graduacao = graduacao
 
         # Geração automática do código do curso.
         # Captura a primeira letra de cada palavra (maior que 3 letras) do nome da graduação e converte para maiúscula.
         iniciais_graduacao = "".join(palavra[0].upper() for palavra in self.graduacao.nome.split() if len(palavra) > 3)
 
-        # Gera o identificador.
-        # Sigla + Número do próximo curso na grade (preenchido com zeros).
+        # Gera o identificador: Sigla + Número do próximo curso na grade (preenchido com zeros).
         self._codigo = f"{iniciais_graduacao}{(len(self.graduacao.grade_curricular) + 1):04d}"
 
         # Inicialização dos dados base (acionando as validações dos setters).
         self.nome = nome
+
         self.carga_horaria = carga_horaria
+
         self.ementa = ementa
 
         # Validação e inicialização de pré-requisitos.
@@ -53,6 +56,7 @@ class Curso:
 
     @nome.setter
     def nome(self, novo_nome: str):
+
         if not isinstance(novo_nome, str):
             raise TypeError("O nome do curso deve ser enviado em formato de texto!")
 
@@ -90,6 +94,7 @@ class Curso:
 
     @carga_horaria.setter
     def carga_horaria(self, nova_carga_horaria: int):
+
         # Verifica se o tipo de dado passado foi correto (blindagem contra booleanos e textos).
         if isinstance(nova_carga_horaria, bool) or not isinstance(nova_carga_horaria, int):
             raise TypeError("A carga horária do curso deve ser informada exclusivamente como um número inteiro!")
@@ -101,7 +106,7 @@ class Curso:
         self._carga_horaria = nova_carga_horaria
 
 
-    # Permite leitura e modificações internas na lista de pré-requisitos (ex: ".append"),
+    # Permite leitura e modificações internas na lista de pré-requisitos (ex: '.append'),
     # mas a ausência do Setter impede a substituição acidental de todos os pré-requisitos.
     @property
     def pre_requisitos(self):
@@ -115,6 +120,7 @@ class Curso:
 
     @ementa.setter
     def ementa(self, nova_ementa: str):
+
         if not isinstance(nova_ementa, str):
             raise TypeError("A ementa do curso deve ser enviada em formato de texto!")
 
@@ -123,8 +129,8 @@ class Curso:
 
         if not nova_ementa or len(nova_ementa) < 100:
             raise ValueError(
-                f"Ementa muito curta (Atual: {len(nova_ementa)} caracteres). "
-                f"É exigido um mínimo de 100 caracteres detalhando a disciplina!"
+                f"Ementa muito curta (Atual: {len(nova_ementa)} caracteres)! "
+                f"É exigido um mínimo de 100 caracteres detalhando a disciplina."
             )
 
         self._ementa = nova_ementa
@@ -142,13 +148,14 @@ class Curso:
         Atualiza a estrutura base da disciplina (ementa e horas).
         Bloqueia a modificação automaticamente caso o curso possua turmas em andamento.
         """
+
         if not isinstance(nova_ementa, str):
-            raise TypeError("A nova ementa deve ser em formato de texto!")
+            raise TypeError("A nova ementa deve ser enviada em formato de texto!")
 
         if isinstance(nova_carga_horaria, bool) or not isinstance(nova_carga_horaria, int):
             raise TypeError("A nova carga horária deve ser informada como número inteiro!")
 
-        # Verifica utilizando o gerador any() se há alguma turma cuja situação seja "Aberta".
+        # Verifica utilizando o gerador any() se há alguma turma cuja situação seja 'Aberta'.
         if any(turma.status == "Aberta" for turma in self.turmas_ofertadas):
             raise ValueError(
                 f"Operação negada! Não é possível alterar a base do curso '{self.nome}' enquanto há turmas ativas."
@@ -156,6 +163,7 @@ class Curso:
 
         # Reutiliza os próprios setters da classe para garantir que as novas validações de tamanho/formato se aplicam.
         self.ementa = nova_ementa
+
         self.carga_horaria = nova_carga_horaria
 
 
@@ -164,18 +172,19 @@ class Curso:
 
         # Validação estrita de tipo usando o nome da classe.
         if novo_pre_requisito.__class__.__name__ != "Curso":
-            raise TypeError("O pré-requisito deve ser um objeto válido da classe Curso!")
+            raise TypeError("O pré-requisito deve ser um objeto válido da classe 'Curso'!")
 
         # Inspeciona a lista de exigências do curso que está a tentar ser adicionado.
         # Se o curso atual já estiver lá, uma adição mútua criaria um paradoxo.
         if self in novo_pre_requisito.pre_requisitos:
             raise ValueError(
-                f"ERRO: Ciclo de dependência detectado! Não é possível adicionar '{novo_pre_requisito.nome}' como pré-requisito, pois ele já exige '{self.nome}'."
+                f"ERRO: Ciclo de dependência detectado! Não é possível adicionar '{novo_pre_requisito.nome}' "
+                f"como pré-requisito, pois ele já exige '{self.nome}'."
             )
 
         # Caso não haja conflito estrutural, o curso é aprovado e anexado à lista.
         self.pre_requisitos.append(novo_pre_requisito)
-        print("Pré-requisito adicionado com sucesso!")
+
 
     def vincular_turma(self, turma: "Turma") -> None:
         """
@@ -183,11 +192,14 @@ class Curso:
         Permite que uma Turma se registe no histórico deste Curso de forma segura,
         sem que seja necessário expor ou aceder ao atributo protegido '_turmas_ofertadas' diretamente.
         """
+
         if turma.__class__.__name__ != "Turma":
-            raise TypeError("Apenas objetos da classe Turma podem ser vinculados ao curso!")
+            raise TypeError("Apenas objetos da classe 'Turma' podem ser vinculados ao curso!")
 
         self._turmas_ofertadas.append(turma)
 
+
     def __str__(self) -> str:
-        # Retorna uma representação amigável e formatada do curso por meio de uma string.
+        """Retorna uma representação amigável e formatada do curso por meio de uma string."""
+
         return f"Graduação: {self.graduacao.nome}\n{self.nome}\n{self.carga_horaria}h\nPré-requisitos: {self.pre_requisitos}"

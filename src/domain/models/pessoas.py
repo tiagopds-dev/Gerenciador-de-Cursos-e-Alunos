@@ -1,5 +1,6 @@
 import re
 
+
 # Construção da classe.
 class Pessoa:
     """
@@ -7,11 +8,15 @@ class Pessoa:
     pessoa na instituição (nome, CPF, telefone e e-mail).
     """
 
+
     def __init__(self, nome: str, cpf: str, telefone: str, email: str) -> None:
 
         self.nome = nome
+
         self.cpf = cpf
+
         self.telefone = telefone
+
         self.email = email
 
 
@@ -116,17 +121,18 @@ class Pessoa:
         else:
             raise ValueError("O formato do e-mail é inválido. Certifique-se de usar '@', '.' e não incluir espaços!")
 
+
     def __validar_cpf(self, cpf: str) -> bool:
         """
-        Função responsável por realizar a "limpeza" e validação do CPF digitado,
-        removendo qualquer coisa que não seja um dígito (0-9), impedindo CPFs como "00000000000",
+        Função responsável por realizar a 'limpeza' e validação do CPF digitado,
+        removendo qualquer coisa que não seja um dígito (0-9), impedindo CPFs como '00000000000',
         verificando o tamanho do CPF digitado e executando verificação matemática de dígitos verificadores.
         """
 
         # Retira quaisquer coisas que não sejam dígitos (0-9).
         cpf = re.sub(r"[^0-9]", "", cpf)
 
-        # Barra CPFs como "00000000000", "11111111111", "22222222222", etc.
+        # Barra CPFs como '00000000000', '11111111111', '22222222222', etc.
         if len(set(cpf)) == 1:
             return False
 
@@ -136,6 +142,7 @@ class Pessoa:
 
         # Validação matemática do 1º dígito verificador.
         dig_veri_1 = sum(int(cpf[i]) * (10 - i) for i in range(9))
+
         dig_veri_1 = (dig_veri_1 * 10) % 11
 
         if dig_veri_1 == 10 or dig_veri_1 == 11:
@@ -146,6 +153,7 @@ class Pessoa:
 
         # Validação matemática do 2º dígito verificador.
         dig_veri_2 = sum(int(cpf[i]) * (11 - i) for i in range(10))
+
         dig_veri_2 = (dig_veri_2 * 10) % 11
 
         if dig_veri_2 == 10 or dig_veri_2 == 11:
