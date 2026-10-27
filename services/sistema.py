@@ -232,3 +232,4 @@ class Sistema:
         """Usa o atributo top_n_alunos da configuração para ordenar os CRs e retornar os melhores alunos."""
 
         pass
+
