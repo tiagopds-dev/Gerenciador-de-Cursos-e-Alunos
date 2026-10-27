@@ -58,6 +58,9 @@ class Matricula:
         # Registra esta matrícula na lista de matrículas ativas da turma.
         self.turma.matriculas_ativas.append(self)
 
+        # Registra a matrícula no histórico acadêmico do aluno.
+        self.aluno.historico.append(self)
+
 
     @property
     def notas(self):
