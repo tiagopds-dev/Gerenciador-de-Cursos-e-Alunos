@@ -6,7 +6,7 @@ from src.domain.models.ofertas import Oferta
 # Resolve os alertas da IDE sem causar o erro fatal de importação circular em tempo real.
 if TYPE_CHECKING:
     from src.domain.models.cursos import Curso
-    from config.config import Configuracao
+    from src.config.config import Configuracao
 
 
 # Construção da classe.

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.domain.models.alunos import Aluno
     from src.domain.models.turmas import Turma
-    from config.config import Configuracao
+    from src.config.config import Configuracao
 
 
 # Construção da classe.

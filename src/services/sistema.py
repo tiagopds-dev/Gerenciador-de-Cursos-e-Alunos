@@ -3,7 +3,7 @@ from src.domain.models.turmas import Turma
 from src.domain.models.cursos import Curso
 from src.domain.models.matriculas import Matricula
 from src.domain.models.graduacoes import Graduacao
-from config.config import Configuracao
+from src.config.config import Configuracao
 
 
 # Construção da classe.
