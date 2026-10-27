@@ -10,7 +10,7 @@ class Configuracao:
     um arquivo (JSON) e centraliza parâmetros como notas mínimas e prazos de trancamento.
     """
 
-    def __init__(self, caminho: str):
+    def __init__(self, caminho: str) -> None:
 
         caminho_arquivo = Path(caminho)
 
