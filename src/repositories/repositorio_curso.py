@@ -82,6 +82,13 @@ class RepositorioCurso:
                     graduacao_encontrada = graduacao
                     break
 
+            # Trava de segurança para satisfazer a tipagem estrita e proteger a integridade dos dados.
+            if graduacao_encontrada is None:
+                raise ValueError(
+                    f"Corrupção de dados: A graduação '{curso_dict['graduacao_codigo']}' "
+                    f"não foi encontrada para recriar o curso '{curso_dict['nome']}'!"
+                )
+
             # Instancia o curso passando uma lista de pré-requisitos vazia nesta primeira passagem.
             novo_curso = Curso(
                 curso_dict["nome"],
@@ -92,8 +99,7 @@ class RepositorioCurso:
             )
 
             # Restabelece o vínculo bidirecional: a graduação volta a reconhecer o curso na sua grade.
-            if graduacao_encontrada:
-                graduacao_encontrada.adicionar_disciplina(novo_curso)
+            graduacao_encontrada.adicionar_disciplina(novo_curso)
 
             cursos_reconstruidos.append(novo_curso)
 
