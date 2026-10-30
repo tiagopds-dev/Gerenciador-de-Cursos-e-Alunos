@@ -17,6 +17,7 @@ class RepositorioMatricula:
         # Define o caminho fixo do arquivo JSON responsável pelas matrículas.
         self.__caminho_arquivo = Path("data/matriculas.json")
 
+
     def salvar(self, matriculas: list[Matricula]) -> None:
         """Converte a lista de objetos Matricula em formato JSON e escreve no disco."""
 
@@ -37,6 +38,7 @@ class RepositorioMatricula:
         with open(self.__caminho_arquivo, "w", encoding="utf-8") as arquivo:
             # Salva o arquivo JSON com formatação amigável (identação) e aceitando caracteres especiais.
             json.dump(matriculas_exportacao, arquivo, indent=4, ensure_ascii=False)
+
 
     def carregar(self, alunos_disponiveis: list[Aluno], turmas_disponiveis: list[Turma]) -> list[Matricula]:
         """Lê o arquivo JSON e reconstrói as matrículas ligando os objetos Aluno e Turma."""
