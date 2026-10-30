@@ -61,7 +61,6 @@ class Sistema:
 
 
     # Propriedades de acesso às listas do sistema (sem setters para evitar sobrescrita acidental).
-
     @property
     def graduacoes(self):
         return self._graduacoes
@@ -184,4 +183,84 @@ class Sistema:
             raise ValueError(f"O aluno '{aluno.nome}' já está cursando ou já foi aprovado em '{turma.curso.nome}'!")
 
         # Verifica se o aluno atingiu o teto de disciplinas simultâneas permitido pelo documento de configuração.
-        if len(disciplinas_ativas) >= self.configuracao.max_turmas
+        if len(disciplinas_ativas) >= self.configuracao.max_turmas_por_aluno:
+            raise ValueError(
+                f"O aluno '{aluno.nome}' já atingiu o limite máximo de "
+                f"{self.configuracao.max_turmas_por_aluno} turmas simultâneas!"
+            )
+
+        # Percorre a árvore de pré-requisitos para garantir que a ordem letiva está a ser respeitada.
+        for pre_requisito in turma.curso.pre_requisitos:
+
+            if pre_requisito not in disciplinas_concluidas:
+                raise ValueError(
+                    f"Pré-requisito não atendido! O aluno '{aluno.nome}' precisa ser aprovado "
+                    f"em '{pre_requisito.nome}' antes de cursar '{turma.curso.nome}'."
+                )
+
+        # Avalia se há conflito de dias e horários entre a nova turma pretendida e as turmas atuais do aluno.
+        if any(turma.verificar_choque_horario(disciplina) for disciplina in disciplinas_ativas):
+            raise ValueError(f"Choque de horário detectado entre a turma '{turma.id_turma}' e uma disciplina em curso!")
+
+        # Superadas todas as validações de negócio, instancia o vínculo oficial de matrícula.
+        nova_matricula = Matricula(aluno, turma)
+
+        # Adiciona a matrícula à lista geral do sistema para que seja persistida posteriormente.
+        self._matriculas.append(nova_matricula)
+
+
+    # Métodos de Persistência (Ponte entre Memória e Disco)
+
+    def salvar_estado(self) -> None:
+        """Aciona os 5 repositórios para serializar as listas da memória e gravá-las no disco em formato JSON."""
+
+        self.__repo_graduacao.salvar(self._graduacoes)
+        self.__repo_curso.salvar(self._cursos)
+        self.__repo_turma.salvar(self._turmas)
+        self.__repo_aluno.salvar(self._alunos)
+        self.__repo_matricula.salvar(self._matriculas)
+
+
+    def carregar_estado(self) -> None:
+        """
+        Aciona os 5 repositórios para ler os JSONs no disco e recriar as entidades em memória.
+        A ordem de hidratação é rigorosamente mantida para resolver as dependências das Chaves Estrangeiras.
+        """
+
+        self._graduacoes = self.__repo_graduacao.carregar()
+        self._cursos = self.__repo_curso.carregar(self._graduacoes)
+        self._turmas = self.__repo_turma.carregar(self._cursos)
+        self._alunos = self.__repo_aluno.carregar(self._graduacoes)
+        self._matriculas = self.__repo_matricula.carregar(self._alunos, self._turmas)
+
+
+    # Métodos de Geração de Relatórios Acadêmicos (A Implementar)
+
+    def gerar_relatorio_alunos_turma(self, id_turma: str) -> None:
+        """Mostra vagas ocupadas em relação às vagas totais de uma determinada turma."""
+
+        pass
+
+
+    def gerar_relatorio_taxa_aprovacao(self) -> None:
+        """Mostra a quantidade de aprovações nas turmas em relação à quantidade de matriculados."""
+
+        pass
+
+
+    def gerar_relatorio_distribuicao_notas(self, id_turma: str) -> None:
+        """Calcula média, mediana e desvio padrão das notas de uma turma específica."""
+
+        pass
+
+
+    def gerar_relatorio_alunos_risco(self) -> None:
+        """Lista os alunos com nota ou frequência abaixo dos parâmetros definidos nas configurações."""
+
+        pass
+
+
+    def gerar_relatorio_top_n(self, periodo: str) -> None:
+        """Usa o atributo top_n_alunos da configuração para ordenar os CRs e retornar os melhores alunos."""
+
+        pass
