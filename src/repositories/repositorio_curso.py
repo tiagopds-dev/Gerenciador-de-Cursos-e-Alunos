@@ -28,9 +28,11 @@ class RepositorioCurso:
 
             # Extrai os dados base e converte as relações complexas em Chaves Estrangeiras (textos/códigos).
             cursos_exportacao.append({
+                "codigo": curso.codigo,
                 "nome": curso.nome,
                 "carga_horaria": curso.carga_horaria,
                 "ementa": curso.ementa,
+                "ativo": curso.ativo,
                 "graduacao_codigo": curso.graduacao.codigo_mec,
                 "pre_requisitos_codigos": [pre_requisito.codigo for pre_requisito in curso.pre_requisitos]
             })
@@ -98,8 +100,14 @@ class RepositorioCurso:
                 graduacao_encontrada
             )
 
-            # Restabelece o vínculo bidirecional: a graduação volta a reconhecer o curso na sua grade.
-            graduacao_encontrada.adicionar_disciplina(novo_curso)
+            # Restaura o código original e o status de Soft Delete guardados no disco.
+            if "codigo" in curso_dict:
+                novo_curso._codigo = curso_dict["codigo"]
+
+            novo_curso.ativo = curso_dict.get("ativo", True)
+
+            # Restabelece o vínculo bidirecional diretamente na grade para suportar graduações inativadas.
+            graduacao_encontrada.grade_curricular.append(novo_curso)
 
             cursos_reconstruidos.append(novo_curso)
 

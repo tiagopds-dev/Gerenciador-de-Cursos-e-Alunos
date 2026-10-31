@@ -27,6 +27,9 @@ class Graduacao:
         # Inicializa o histórico como uma lista vazia de cursos (momento da criação).
         self._grade_curricular = []
 
+        # Define o estado inicial como ativo para suporte ao padrão Soft Delete.
+        self.ativo = True
+
 
     @property
     def codigo_mec(self):
@@ -101,12 +104,30 @@ class Graduacao:
         return self._grade_curricular
 
 
+    @property
+    def ativo(self) -> bool:
+        return self._ativo
+
+
+    @ativo.setter
+    def ativo(self, novo_status: bool) -> None:
+
+        # Garante que o atributo de Soft Delete receba estritamente um valor booleano.
+        if not isinstance(novo_status, bool):
+            raise TypeError("O status de atividade da graduação deve ser estritamente um valor booleano (True ou False)!")
+
+        self._ativo = novo_status
+
+
     # O uso de 'Curso' em formato de string (Forward Reference) na tipagem protege a IDE.
     def adicionar_disciplina(self, disciplina: "Curso") -> None:
         """Insere um novo objeto Curso na lista da grade curricular."""
 
         if disciplina.__class__.__name__ != "Curso":
             raise TypeError("Apenas objetos da classe Curso podem ser adicionados à grade curricular!")
+
+        if not self.ativo:
+            raise ValueError(f"Operação negada! A graduação '{self.nome}' encontra-se inativa.")
 
         if disciplina in self.grade_curricular:
             raise ValueError(f"ERRO: '{disciplina.nome}' já faz parte da grade de '{self.nome}'!")
@@ -115,19 +136,23 @@ class Graduacao:
 
 
     def calcular_carga_horaria_total(self) -> int:
-        """Varre a grade curricular somando a carga horária de todos os cursos vinculados."""
+        """Varre a grade curricular somando a carga horária apenas dos cursos ativos vinculados."""
 
-        if not self.grade_curricular:
-            raise ValueError(f"ERRO: '{self.nome}' não possui disciplinas cadastradas!")
+        cursos_ativos = [curso for curso in self.grade_curricular if curso.ativo]
 
-        return sum(curso.carga_horaria for curso in self.grade_curricular)
+        if not cursos_ativos:
+            raise ValueError(f"ERRO: '{self.nome}' não possui disciplinas ativas cadastradas!")
+
+        return sum(curso.carga_horaria for curso in cursos_ativos)
 
 
     def verificar_elegibilidade_formatura(self, historico_aluno: "list[Matricula]") -> bool:
-        """Compara o histórico do aluno com a grade curricular para determinar se ele pode colar grau."""
+        """Compara o histórico do aluno com as disciplinas ativas da grade curricular para determinar se ele pode colar grau."""
 
-        if not self.grade_curricular:
-            raise ValueError(f"ERRO: A graduação '{self.nome}' não possui disciplinas cadastradas na grade!")
+        cursos_ativos = [curso for curso in self.grade_curricular if curso.ativo]
+
+        if not cursos_ativos:
+            raise ValueError(f"ERRO: A graduação '{self.nome}' não possui disciplinas ativas cadastradas na grade!")
 
         if not historico_aluno:
             raise ValueError("ERRO: O aluno não possui histórico de disciplinas cursadas!")
@@ -140,8 +165,8 @@ class Graduacao:
             if matricula.status == "Aprovado"
         }
 
-        # Varre a grade curricular da graduação.
-        for disciplina in self.grade_curricular:
+        # Varre apenas as disciplinas ativas da grade curricular da graduação.
+        for disciplina in cursos_ativos:
 
             # Se a disciplina exigida não estiver dentro do conjunto de disciplinas aprovadas do aluno, ele não forma.
             if disciplina.nome not in disciplinas_aprovadas:

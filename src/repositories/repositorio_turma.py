@@ -38,6 +38,7 @@ class RepositorioTurma:
                 "vagas": turma.vagas,
                 "local": turma.local,
                 "status": turma.status,
+                "ativo": turma.ativo,
                 "curso_codigo": turma.curso.codigo
             })
 
@@ -115,14 +116,16 @@ class RepositorioTurma:
                 curso_encontrado
             )
 
-            # Fura o encapsulamento de forma controlada para restaurar o ID exato e o status guardados no disco.
+            # Fura o encapsulamento de forma controlada para restaurar o ID exato, o status e a atividade.
             nova_turma._id_turma = turma_dict["id_turma"]
 
             nova_turma.status = turma_dict["status"]
 
+            nova_turma.ativo = turma_dict.get("ativo", True)
+
             turmas_reconstruidas.append(nova_turma)
 
-        # Restaura o contador sequencial de classe salvo nos metadados do JSON.
+        # Sobrescreve o contador sequencial da classe com o valor real salvo nos metadados do JSON.
         Turma._contador_turma = dict_turmas_importacao["metadados"]["contador_turma"]
 
         return turmas_reconstruidas

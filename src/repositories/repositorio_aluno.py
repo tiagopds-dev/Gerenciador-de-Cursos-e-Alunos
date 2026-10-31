@@ -37,6 +37,7 @@ class RepositorioAluno:
                 "telefone": aluno.telefone,
                 "email": aluno.email,
                 "matricula": aluno.matricula,
+                "ativo": aluno.ativo,
                 "graduacao_codigo": aluno.graduacao.codigo_mec
             })
 
@@ -114,12 +115,14 @@ class RepositorioAluno:
                 graduacao_encontrada
             )
 
-            # Fura o encapsulamento de forma controlada para restaurar a matrícula exata guardada no disco.
+            # Fura o encapsulamento de forma controlada para restaurar a matrícula exata e o status de atividade.
             novo_aluno._matricula = aluno_dict["matricula"]
+
+            novo_aluno.ativo = aluno_dict.get("ativo", True)
 
             alunos_reconstruidos.append(novo_aluno)
 
-        # Restaura o contador sequencial de classe salvo nos metadados do JSON.
+        # Sobrescreve o contador sequencial da classe com o valor real salvo nos metadados do JSON.
         Aluno._contador_alunos = dict_alunos_importacao["metadados"]["contador_aluno"]
 
         return alunos_reconstruidos

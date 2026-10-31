@@ -108,6 +108,12 @@ class Matricula:
     def lancar_nota(self, nome_nota: str, nota: float) -> None:
         """Adiciona uma nova nota validada à lista de notas do aluno nesta turma."""
 
+        if not self.aluno.ativo:
+            raise ValueError(f"Operação negada! O aluno '{self.aluno.nome}' encontra-se inativo no sistema.")
+
+        if not self.turma.ativo:
+            raise ValueError(f"Operação negada! A turma '{self.turma.id_turma}' encontra-se inativa no sistema.")
+
         if not isinstance(nome_nota, str):
             raise TypeError("O nome da avaliação deve ser enviado em formato de texto!")
 
@@ -139,6 +145,12 @@ class Matricula:
 
     def lancar_frequencia(self, horas: int = 2) -> None:
         """Atualiza a porcentagem de frequência do aluno com as horas-aula assistidas."""
+
+        if not self.aluno.ativo:
+            raise ValueError(f"Operação negada! O aluno '{self.aluno.nome}' encontra-se inativo no sistema.")
+
+        if not self.turma.ativo:
+            raise ValueError(f"Operação negada! A turma '{self.turma.id_turma}' encontra-se inativa no sistema.")
 
         if isinstance(horas, bool) or not isinstance(horas, int):
             raise TypeError("As horas frequentadas devem ser informadas como um número inteiro!")

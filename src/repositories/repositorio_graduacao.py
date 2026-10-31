@@ -22,13 +22,14 @@ class RepositorioGraduacao:
 
         graduacoes_exportacao = []
 
-        # Extrai apenas as chaves primárias e atributos base de cada objeto.
+        # Extrai apenas as chaves primárias, atributos base e status de atividade de cada objeto.
         for graduacao in graduacoes:
 
             graduacoes_exportacao.append({
                 "codigo_mec": graduacao.codigo_mec,
                 "nome": graduacao.nome,
-                "qtd_semestres": graduacao.qtd_semestres
+                "qtd_semestres": graduacao.qtd_semestres,
+                "ativo": graduacao.ativo
             })
 
         # Garante que a pasta 'data/' existe antes de tentar criar o arquivo.
@@ -66,13 +67,16 @@ class RepositorioGraduacao:
             graduacoes_importacao = json.load(arquivo)
 
         # Reconstrói os objetos do domínio utilizando os dados extraídos.
-        for graduacao in graduacoes_importacao:
+        for graduacao_dict in graduacoes_importacao:
 
             nova_graduacao = Graduacao(
-                graduacao["codigo_mec"],
-                graduacao["nome"],
-                graduacao["qtd_semestres"]
+                graduacao_dict["codigo_mec"],
+                graduacao_dict["nome"],
+                graduacao_dict["qtd_semestres"]
             )
+
+            # Restaura o estado de Soft Delete (usa True como padrão caso leia um JSON antigo).
+            nova_graduacao.ativo = graduacao_dict.get("ativo", True)
 
             graduacoes_reconstruidas.append(nova_graduacao)
 

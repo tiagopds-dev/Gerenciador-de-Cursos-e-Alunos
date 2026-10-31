@@ -48,6 +48,9 @@ class Curso:
         # O histórico de turmas ofertadas nasce como uma lista vazia no momento da criação do curso.
         self._turmas_ofertadas = []
 
+        # Define o estado inicial como ativo para suporte ao padrão Soft Delete.
+        self.ativo = True
+
 
     @property
     def nome(self):
@@ -143,11 +146,29 @@ class Curso:
         return self._turmas_ofertadas
 
 
+    @property
+    def ativo(self) -> bool:
+        return self._ativo
+
+
+    @ativo.setter
+    def ativo(self, novo_status: bool) -> None:
+
+        # Garante que o atributo de Soft Delete receba estritamente um valor booleano.
+        if not isinstance(novo_status, bool):
+            raise TypeError("O status de atividade do curso deve ser estritamente um valor booleano (True ou False)!")
+
+        self._ativo = novo_status
+
+
     def alterar_carga_horaria(self, nova_carga_horaria: int, nova_ementa: str) -> None:
         """
         Atualiza a estrutura base da disciplina (ementa e horas).
-        Bloqueia a modificação automaticamente caso o curso possua turmas em andamento.
+        Bloqueia a modificação automaticamente caso o curso esteja inativo ou possua turmas em andamento.
         """
+
+        if not self.ativo:
+            raise ValueError(f"Operação negada! O curso '{self.nome}' encontra-se inativo.")
 
         if not isinstance(nova_ementa, str):
             raise TypeError("A nova ementa deve ser enviada em formato de texto!")
@@ -155,8 +176,8 @@ class Curso:
         if isinstance(nova_carga_horaria, bool) or not isinstance(nova_carga_horaria, int):
             raise TypeError("A nova carga horária deve ser informada como número inteiro!")
 
-        # Verifica utilizando o gerador any() se há alguma turma cuja situação seja 'Aberta'.
-        if any(turma.status == "Aberta" for turma in self.turmas_ofertadas):
+        # Verifica utilizando o gerador any() se há alguma turma ativa cuja situação seja 'Aberta'.
+        if any(turma.status == "Aberta" and turma.ativo for turma in self.turmas_ofertadas):
             raise ValueError(
                 f"Operação negada! Não é possível alterar a base do curso '{self.nome}' enquanto há turmas ativas."
             )
@@ -173,6 +194,9 @@ class Curso:
         # Validação estrita de tipo usando o nome da classe.
         if novo_pre_requisito.__class__.__name__ != "Curso":
             raise TypeError("O pré-requisito deve ser um objeto válido da classe 'Curso'!")
+
+        if not novo_pre_requisito.ativo:
+            raise ValueError(f"Não é possível adicionar o curso '{novo_pre_requisito.nome}' como pré-requisito, pois ele está inativo!")
 
         # Inspeciona a lista de exigências do curso que está a tentar ser adicionado.
         # Se o curso atual já estiver lá, uma adição mútua criaria um paradoxo.
@@ -202,4 +226,11 @@ class Curso:
     def __str__(self) -> str:
         """Retorna uma representação amigável e formatada do curso por meio de uma string."""
 
-        return f"Graduação: {self.graduacao.nome}\n{self.nome}\n{self.carga_horaria}h\nPré-requisitos: {self.pre_requisitos}"
+        situacao = "Ativo" if self.ativo else "Inativo"
+
+        return (
+            f"Graduação: {self.graduacao.nome}\n"
+            f"{self.codigo} - {self.nome} ({situacao})\n"
+            f"{self.carga_horaria}h\n"
+            f"Pré-requisitos: {[pre.codigo for pre in self.pre_requisitos]}"
+        )

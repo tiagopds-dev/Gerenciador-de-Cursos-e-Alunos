@@ -16,14 +16,14 @@ class Turma(Oferta):
     Controla a própria condição (aberta/fechada) e possui a lógica contra choques de horário.
     """
 
-    # Cria um atributo de classe que atua como contador sequencial.
-    # Pertence à classe Turma, assim, não é reinicializado a cada novo objeto.
+    # Valor padrão inicial para a primeira execução do sistema (quando o JSON ainda não existe).
+    # Em execuções subsequentes, este atributo é sobrescrito pelo dicionário-mestre do RepositorioTurma.
     _contador_turma = 1
 
 
     def __init__(self, periodo: str, dias_horarios: dict, vagas: int, local: str, curso: "Curso") -> None:
 
-        # Chama o construtor da superclasse Oferta para validar e atribuir os dados base.
+        # Chama o construtor da superclasse Oferta para validar dados base e inicializar 'ativo = True'.
         super().__init__(periodo, dias_horarios, vagas, local)
 
         # Validação de segurança para garantir que o objeto passado é um Curso válido.
@@ -92,6 +92,9 @@ class Turma(Oferta):
         if configuracao.__class__.__name__ != "Configuracao":
             raise TypeError("A configuração deve ser um objeto válido da classe Configuracao!")
 
+        if not self.ativo:
+            raise ValueError(f"Operação negada! A turma '{self.id_turma}' foi desativada do sistema.")
+
         # Proíbe alteração de condição caso turma já esteja aberta.
         if self.status == "Aberta":
             raise ValueError(f"A turma '{self.id_turma}' já se encontra Aberta!")
@@ -115,6 +118,9 @@ class Turma(Oferta):
 
     def fechar_turma(self) -> None:
         """Altera a situação da turma para 'Fechada', impedindo novas matrículas."""
+
+        if not self.ativo:
+            raise ValueError(f"Operação negada! A turma '{self.id_turma}' encontra-se desativada.")
 
         # Proíbe alteração de condição caso turma já esteja fechada.
         if self.status == "Fechada":

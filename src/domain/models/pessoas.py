@@ -5,7 +5,7 @@ import re
 class Pessoa:
     """
     Classe base que concentra os dados de identificação comuns a qualquer
-    pessoa na instituição (nome, CPF, telefone e e-mail).
+    pessoa na instituição (nome, CPF, telefone, e-mail e status de atividade).
     """
 
 
@@ -18,6 +18,9 @@ class Pessoa:
         self.telefone = telefone
 
         self.email = email
+
+        # Define o estado inicial como ativo para suporte ao padrão Soft Delete.
+        self.ativo = True
 
 
     @property
@@ -120,6 +123,21 @@ class Pessoa:
             self._email = novo_email
         else:
             raise ValueError("O formato do e-mail é inválido. Certifique-se de usar '@', '.' e não incluir espaços!")
+
+
+    @property
+    def ativo(self) -> bool:
+        return self._ativo
+
+
+    @ativo.setter
+    def ativo(self, novo_status: bool) -> None:
+
+        # Garante que o atributo de Soft Delete receba estritamente um valor booleano.
+        if not isinstance(novo_status, bool):
+            raise TypeError("O status de atividade da pessoa deve ser estritamente um valor booleano (True ou False)!")
+
+        self._ativo = novo_status
 
 
     def __validar_cpf(self, cpf: str) -> bool:

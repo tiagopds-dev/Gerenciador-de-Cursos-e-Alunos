@@ -5,7 +5,7 @@ from datetime import date
 class Oferta:
     """
     Classe base que abstrai o conceito de algo sendo oferecido no tempo e espaço,
-    contendo o período letivo, horários, local e limite de vagas.
+    contendo o período letivo, horários, local, limite de vagas e status de atividade.
     """
 
 
@@ -18,6 +18,9 @@ class Oferta:
         self.vagas = vagas
 
         self.local = local
+
+        # Define o estado inicial como ativo para suporte ao padrão Soft Delete.
+        self.ativo = True
 
 
     @property
@@ -121,3 +124,18 @@ class Oferta:
 
         # Segue com a atribuição se todas as verificações foram atendidas.
         self._local = novo_local
+
+
+    @property
+    def ativo(self) -> bool:
+        return self._ativo
+
+
+    @ativo.setter
+    def ativo(self, novo_status: bool) -> None:
+
+        # Garante que o atributo de Soft Delete receba estritamente um valor booleano.
+        if not isinstance(novo_status, bool):
+            raise TypeError("O status de atividade da oferta deve ser estritamente um valor booleano (True ou False)!")
+
+        self._ativo = novo_status

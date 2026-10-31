@@ -15,14 +15,14 @@ class Aluno(Pessoa):
     Graduação e um histórico acadêmico. Responsável por calcular o Coeficiente de Rendimento (CR).
     """
 
-    # Cria um atributo de classe que atua como contador sequencial.
-    # Pertence à classe Aluno, assim, não é reinicializado a cada novo objeto.
+    # Valor padrão inicial para a primeira execução do sistema (quando o JSON ainda não existe).
+    # Em execuções subsequentes, este atributo é sobrescrito pelo dicionário-mestre do RepositorioAluno.
     _contador_alunos = 1
 
 
     def __init__(self, nome: str, cpf: str, telefone: str, email: str, graduacao: "Graduacao") -> None:
 
-        # Chama o construtor da classe base (Pessoa) para validar e salvar os dados básicos.
+        # Chama o construtor da classe base (Pessoa) para validar dados básicos e inicializar 'ativo = True'.
         super().__init__(nome, cpf, telefone, email)
 
         # Gera a matrícula automática utilizando um padrão pré-estabelecido (com base na UFCA).
