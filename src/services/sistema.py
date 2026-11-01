@@ -1,5 +1,9 @@
-import re
+import re, statistics
+
+from src.domain.models import graduacoes
 from src.domain.models.alunos import Aluno
+from src.domain.models.ofertas import Oferta
+from src.domain.models.pessoas import Pessoa
 from src.domain.models.turmas import Turma
 from src.domain.models.cursos import Curso
 from src.domain.models.matriculas import Matricula
@@ -10,6 +14,7 @@ from src.repositories.repositorio_curso import RepositorioCurso
 from src.repositories.repositorio_graduacao import RepositorioGraduacao
 from src.repositories.repositorio_matricula import RepositorioMatricula
 from src.repositories.repositorio_turma import RepositorioTurma
+
 
 
 # Construção da classe.
@@ -725,34 +730,225 @@ class Sistema:
         self._alunos = self.__repo_aluno.carregar(self._graduacoes)
         self._matriculas = self.__repo_matricula.carregar(self._alunos, self._turmas)
 
+        # -------------------------------------------------------------------------
+        # READ: Métodos de Geração de Relatórios Acadêmicos
+        # -------------------------------------------------------------------------
 
-    # Métodos de Geração de Relatórios Acadêmicos
+        def gerar_relatorio_alunos_turma(self, id_turma: str) -> None:
+            """Mostra vagas ocupadas em relação às vagas totais de uma determinada turma, listando os inscritos."""
 
-    def gerar_relatorio_alunos_turma(self, id_turma: str) -> None:
-        """Mostra vagas ocupadas em relação às vagas totais de uma determinada turma."""
+            if not isinstance(id_turma, str):
+                raise TypeError("O ID da turma deve ser enviado em formato de texto!")
 
-        pass
+            turma_encontrada = self.buscar_turma(id_turma)
 
+            if turma_encontrada is None:
+                raise ValueError(f"Relatório negado: Turma '{id_turma}' não encontrada ou inativa!")
 
-    def gerar_relatorio_taxa_aprovacao(self) -> None:
-        """Mostra a quantidade de aprovações nas turmas em relação à quantidade de matriculados."""
+            capacidade_total = turma_encontrada.vagas
+            vagas_ocupadas = len(turma_encontrada.matriculas_ativas)
 
-        pass
+            # Medida de segurança contra divisão por zero.
+            porcentagem_lotacao = (vagas_ocupadas / capacidade_total) * 100 if capacidade_total > 0 else 0
 
+            # Impressão de Cabeçalho Estruturado.
+            print("\n" + "=" * 50)
+            print(f" RELATÓRIO DE OCUPAÇÃO DA TURMA: {turma_encontrada.id_turma}")
+            print(f" Curso: {turma_encontrada.curso.nome}")
+            print(f" Ocupação: {vagas_ocupadas} de {capacidade_total} vagas ({porcentagem_lotacao:.1f}%)")
+            print("=" * 50)
 
-    def gerar_relatorio_distribuicao_notas(self, id_turma: str) -> None:
-        """Calcula média, mediana e desvio padrão das notas de uma turma específica."""
+            if not turma_encontrada.matriculas_ativas:
+                print(" Nenhum aluno matriculado nesta turma até o momento.")
+            else:
+                print(" ALUNO(A)\t\tMATRÍCULA\tSTATUS")
+                print("-" * 50)
 
-        pass
+                # Varre e exibe os alunos garantindo alinhamento visual em tela.
+                for matricula in turma_encontrada.matriculas_ativas:
+                    print(f" {matricula.aluno.nome[:15]:<15}\t{matricula.aluno.matricula}\t{matricula.status}")
 
+            print("=" * 50 + "\n")
 
-    def gerar_relatorio_alunos_risco(self) -> None:
-        """Lista os alunos com nota ou frequência abaixo dos parâmetros definidos nas configurações."""
+        def gerar_relatorio_taxa_aprovacao(self) -> None:
+            """Exibe a porcentagem de aprovação global e detalhada por graduação na instituição."""
 
-        pass
+            # Filtra as matrículas ativas desconsiderando quem ainda está cursando ou trancou.
+            total_avaliados = [matricula for matricula in self.matriculas if
+                               matricula.status not in ["Cursando", "Trancada"]]
 
+            # Filtra, a partir dos avaliados, os que lograram êxito.
+            total_aprovados = [matricula for matricula in total_avaliados if matricula.status == "Aprovado"]
 
-    def gerar_relatorio_top_n(self, periodo: str) -> None:
-        """Usa o atributo top_n_alunos da configuração para ordenar os CRs e retornar os melhores alunos."""
+            print("\n" + "=" * 50)
+            print(" RELATÓRIO INSTITUCIONAL DE TAXA DE APROVAÇÃO")
+            print("=" * 50)
 
-        pass
+            # Prevenção contra Divisão por Zero em cenários onde não há consolidações ainda.
+            if not total_avaliados:
+                print(" Aviso: Não há matrículas consolidadas para gerar este relatório.")
+                print("=" * 50 + "\n")
+                return
+
+            taxa_aprovacao_global = (len(total_aprovados) / len(total_avaliados)) * 100
+
+            print(f" Total de Avaliados Institucionais: {len(total_avaliados)}")
+            print(f" Taxa de Aprovação Global: {taxa_aprovacao_global:.2f}%")
+            print("-" * 50)
+
+            # Gera métricas isoladas para cada graduação ativa no sistema.
+            for graduacao in self.graduacoes:
+
+                # Avaliados específicos desta graduação.
+                avaliados_grad = [mat for mat in total_avaliados if
+                                  mat.aluno.graduacao.codigo_mec == graduacao.codigo_mec]
+
+                if avaliados_grad:
+                    aprovados_grad = [mat for mat in avaliados_grad if mat.status == "Aprovado"]
+
+                    taxa_grad = (len(aprovados_grad) / len(avaliados_grad)) * 100
+
+                    print(f" [ {graduacao.nome} ]")
+                    print(f"   Avaliados: {len(avaliados_grad)} | Aprovação: {taxa_grad:.2f}%")
+
+            print("=" * 50 + "\n")
+
+        def gerar_relatorio_distribuicao_notas(self, id_turma: str) -> None:
+            """Calcula as métricas estatísticas de média, mediana e desvio padrão das notas de uma turma."""
+
+            if not isinstance(id_turma, str):
+                raise TypeError("O ID da turma deve ser enviado em formato de texto!")
+
+            turma_encontrada = self.buscar_turma(id_turma)
+
+            if turma_encontrada is None:
+                raise ValueError(f"Relatório negado: Turma '{id_turma}' não encontrada ou inativa!")
+
+            # Extrai apenas os números finais de notas lançadas, desconsiderando os 'None'.
+            notas = [matricula.notas["MF"] for matricula in turma_encontrada.matriculas_ativas if
+                     matricula.notas["MF"] is not None]
+
+            print("\n" + "=" * 50)
+            print(f" DISTRIBUIÇÃO ESTATÍSTICA DE NOTAS: {turma_encontrada.id_turma}")
+            print(f" Curso: {turma_encontrada.curso.nome}")
+            print("=" * 50)
+
+            # O cálculo de desvio padrão exige no mínimo duas amostras preenchidas.
+            if len(notas) < 2:
+                print(" Aviso: São necessários pelo menos 2 alunos com notas fechadas")
+                print("        para calcular as estatísticas de desvio padrão.")
+                print("=" * 50 + "\n")
+                return
+
+            # Aciona os motores de cálculo da biblioteca Statistics.
+            media = statistics.mean(notas)
+            mediana = statistics.median(notas)
+            desvio_padrao = statistics.stdev(notas)
+
+            print(f" Amostra Consolidada: {len(notas)} alunos")
+            print("-" * 50)
+            print(f" Média Aritmética: {float(media):.2f}")
+            print(f" Mediana: {float(mediana):.2f}")
+            print(f" Desvio Padrão: {float(desvio_padrao):.2f}")
+            print("=" * 50 + "\n")
+
+        def gerar_relatorio_alunos_risco(self) -> None:
+            """Mapeia alunos ativos no semestre cujas parciais não atendem aos parâmetros mínimos de aprovação."""
+
+            # Seleciona apenas os alunos ativamente engajados (status 'Cursando').
+            matriculas_ativas = [matricula for matricula in self.matriculas if matricula.status == "Cursando"]
+
+            # Puxa os parâmetros globais estipulados no arquivo 'settings.json'.
+            nota_minima = self.configuracao.nota_minima_aprovacao
+            frequencia_minima = self.configuracao.frequencia_minima
+
+            # Verifica se o aluno já fez as provas (AV1 e AV2 não nulas) mas a média final continua abaixo do corte.
+            risco_notas = [
+                matricula for matricula in matriculas_ativas
+                if matricula.notas["MF"] is not None and matricula.notas["MF"] < nota_minima
+            ]
+
+            # A propriedade matricula.frequencia já devolve o valor percentual (0 a 100).
+            risco_faltas = [
+                matricula for matricula in matriculas_ativas
+                if matricula.frequencia < frequencia_minima
+            ]
+
+            print("\n" + "=" * 60)
+            print(" ALERTA INSTITUCIONAL: ALUNOS EM ZONA DE RISCO")
+            print("=" * 60)
+
+            print(f"\n [ RISCO POR NOTA ] (Abaixo de {nota_minima:.1f})")
+            if not risco_notas:
+                print("   Nenhum aluno em risco por nota.")
+            else:
+                for matricula in risco_notas:
+                    print(
+                        f"   {matricula.aluno.matricula} | {matricula.aluno.nome[:15]:<15} | Turma: {matricula.turma.id_turma}")
+
+            print(f"\n [ RISCO POR FALTA ] (Abaixo de {frequencia_minima:.1f}%)")
+            if not risco_faltas:
+                print("   Nenhum aluno em risco por frequência.")
+            else:
+                for matricula in risco_faltas:
+                    print(
+                        f"   {matricula.aluno.matricula} | {matricula.aluno.nome[:15]:<15} | Turma: {matricula.turma.id_turma}")
+
+            print("\n" + "=" * 60 + "\n")
+
+        def gerar_relatorio_top_n(self, periodo: str) -> None:
+            """Agrupa e calcula a média semestral (CR temporário) dos alunos, retornando os 'N' melhores do período."""
+
+            if not isinstance(periodo, str):
+                raise TypeError("O período de referência deve ser informado em formato de texto!")
+
+            # Isola as matrículas que foram concluídas com sucesso no período requisitado.
+            aprovados_periodo = [
+                matricula for matricula in self.matriculas
+                if matricula.turma.periodo == periodo and matricula.status == "Aprovado"
+            ]
+
+            print("\n" + "=" * 50)
+            print(f" RANKING DE EXCELÊNCIA (TOP {self.configuracao.top_n_alunos}) - PERÍODO {periodo}")
+            print("=" * 50)
+
+            if not aprovados_periodo:
+                print(f" Nenhuma aprovação consolidada encontrada para '{periodo}'.")
+                print("=" * 50 + "\n")
+                return
+
+            top_alunos = []
+            matriculas_processadas = []
+
+            # Agrupa o histórico do aluno e calcula a média das suas aprovações no semestre em questão.
+            for matricula in aprovados_periodo:
+
+                aluno_atual = matricula.aluno
+
+                # Bloqueio para evitar processar o mesmo aluno múltiplas vezes.
+                if aluno_atual.matricula in matriculas_processadas:
+                    continue
+
+                # Extrai todas as aprovações DESTE aluno NESTE período.
+                matriculas_aluno_periodo = [
+                    m for m in aprovados_periodo
+                    if m.aluno.matricula == aluno_atual.matricula
+                ]
+
+                # Soma as médias finais (MF) e divide pelo número de matérias feitas.
+                media_aluno_periodo = sum(m.notas["MF"] for m in matriculas_aluno_periodo) / len(
+                    matriculas_aluno_periodo)
+
+                top_alunos.append((aluno_atual.nome, media_aluno_periodo))
+                matriculas_processadas.append(aluno_atual.matricula)
+
+            # Ordena a lista pelas médias (índice 1 da tupla) em ordem decrescente (do maior para o menor).
+            top_alunos.sort(key=lambda x: x[1], reverse=True)
+
+            # Fatia a lista limitando a quantidade de alunos ao estabelecido nas configurações da Instituição.
+            top_alunos = top_alunos[:self.configuracao.top_n_alunos]
+
+            for indice, (nome, media) in enumerate(top_alunos, start=1):
+                print(f" {indice}º LUGAR: {nome[:25]:<25} | Média: {media:.2f}")
+
+            print("=" * 50 + "\n")
