@@ -573,6 +573,38 @@ class Sistema:
             f"O aluno '{aluno_encontrado.nome}' não possui matrícula registrada na turma '{turma_encontrada.id_turma}'!"
         )
 
+    def trancar_matricula_aluno(self, identificador_aluno: str, id_turma: str) -> None:
+        """Localiza o vínculo do aluno na turma e processa o trancamento respeitando a data-limite."""
+
+        if not isinstance(identificador_aluno, str):
+            raise TypeError("O identificador do aluno deve ser enviado em formato de texto!")
+
+        if not isinstance(id_turma, str):
+            raise TypeError("O ID da turma deve ser enviado em formato de texto!")
+
+        aluno_encontrado = self.buscar_aluno(identificador_aluno)
+
+        if aluno_encontrado is None:
+            raise ValueError(f"Trancamento negado: Aluno '{identificador_aluno}' não encontrado ou inativo!")
+
+        turma_encontrada = self.buscar_turma(id_turma)
+
+        if turma_encontrada is None:
+            raise ValueError(f"Trancamento negado: Turma '{id_turma}' não encontrada ou inativa!")
+
+        # Procura o vínculo exato entre o aluno e a turma dentro do histórico acadêmico.
+        for matricula in aluno_encontrado.historico:
+
+            if matricula.turma == turma_encontrada:
+                matricula.trancar_matricula(self.configuracao)
+                print(
+                    f"Matrícula do aluno '{aluno_encontrado.nome}' na turma '{turma_encontrada.id_turma}' trancada com sucesso!")
+                return None
+
+        raise ValueError(
+            f"O aluno '{aluno_encontrado.nome}' não possui matrícula registrada na turma '{turma_encontrada.id_turma}'!"
+        )
+
 
     def consolidar_situacao_turma(self, id_turma: str) -> None:
         """Avalia notas e frequências de todos os alunos cursando a turma para definir aprovação ou reprovação."""

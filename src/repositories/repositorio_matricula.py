@@ -9,8 +9,10 @@ from src.domain.models.matriculas import Matricula
 class RepositorioMatricula:
     """
     Responsável por isolar a lógica de persistência das matrículas.
-    Reconstrói o elo (a ponte) entre Aluno e Turma a partir de múltiplas chaves estrangeiras.
+    Reconstrói o elo (a ponte) entre Aluno e Turma a partir de múltiplas chaves estrangeiras,
+    preservando o histórico de notas, frequência e status consolidado.
     """
+
 
     def __init__(self) -> None:
 
@@ -24,11 +26,14 @@ class RepositorioMatricula:
         matriculas_exportacao = []
 
         for matricula in matriculas:
-            # Extrai apenas as chaves estrangeiras e o estado atual da matrícula.
+
+            # Extrai as chaves estrangeiras, o estado atual, o dicionário de notas e a frequência acumulada.
             matriculas_exportacao.append({
                 "aluno_matricula": matricula.aluno.matricula,
                 "turma_id": matricula.turma.id_turma,
-                "status": matricula.status
+                "status": matricula.status,
+                "notas": matricula.notas,
+                "horas_frequentadas": matricula._horas_frequentadas
             })
 
         # Garante que a pasta 'data/' existe antes de tentar criar o arquivo.
@@ -36,6 +41,7 @@ class RepositorioMatricula:
 
         # Abre o arquivo em modo de escrita ('w') e injeta os dados convertidos.
         with open(self.__caminho_arquivo, "w", encoding="utf-8") as arquivo:
+
             # Salva o arquivo JSON com formatação amigável (identação) e aceitando caracteres especiais.
             json.dump(matriculas_exportacao, arquivo, indent=4, ensure_ascii=False)
 
@@ -91,14 +97,25 @@ class RepositorioMatricula:
             if turma_encontrada is None:
                 raise ValueError(
                     f"Corrupção de dados: A turma com ID '{matricula_dict['turma_id']}' "
-                    f"não foi encontrada para recriar a matrícula do aluno '{matricula_dict['aluno_matricula']}'!"
+                    f"não foi encontrado para recriar a matrícula do aluno '{matricula_dict['aluno_matricula']}'!"
                 )
 
-            # Instancia a matrícula (o construtor deve tratar os vínculos de histórico de forma automática).
+            # Instancia a matrícula (o construtor vincula automaticamente ao histórico do aluno e à turma).
             nova_matricula = Matricula(aluno_encontrado, turma_encontrada)
 
-            # Restaura o status exato salvo no disco (ex: 'Ativa', 'Cancelada', etc.).
+            # Restaura o status exato salvo no disco.
             nova_matricula.status = matricula_dict["status"]
+
+            # Restaura o dicionário de notas e as horas frequentadas (compatível com JSONs anteriores).
+            if "notas" in matricula_dict and isinstance(matricula_dict["notas"], dict):
+                nova_matricula.notas = matricula_dict["notas"]
+
+            if "horas_frequentadas" in matricula_dict and isinstance(matricula_dict["horas_frequentadas"], int):
+                nova_matricula._horas_frequentadas = matricula_dict["horas_frequentadas"]
+
+            # Se a matrícula estava trancada no disco, libera a vaga da lista de matrículas ativas da turma.
+            if nova_matricula.status == "Trancada" and nova_matricula in turma_encontrada.matriculas_ativas:
+                turma_encontrada.matriculas_ativas.remove(nova_matricula)
 
             matriculas_reconstruidas.append(nova_matricula)
 
