@@ -437,7 +437,7 @@ class Sistema:
         nova_carga_horaria: int | None = None,
         nova_ementa: str | None = None
     ) -> None:
-        """Atualiza o nome, a carga horária ou a ementa de um curso ativo (desde que sem turmas abertas)."""
+        """Atualiza o nome, a carga horária ou a ementa de um curso ativo (respeitando as regras de dependência)."""
 
         if not isinstance(codigo, str):
             raise TypeError("O código do curso deve ser enviado em formato de texto!")
@@ -459,14 +459,17 @@ class Sistema:
         if novo_nome is not None:
             curso_encontrado.nome = novo_nome
 
-        # Permite atualizar apenas a carga horária, apenas a ementa, ou ambos simultaneamente.
-        if nova_carga_horaria is not None or nova_ementa is not None:
+        # Regra de negócio: Carga horária não pode ser atualizada isoladamente sem a ementa.
+        if nova_carga_horaria is not None and nova_ementa is None:
+            raise ValueError("Operação negada! Não é permitido atualizar a carga horária sem atualizar a ementa do curso simultaneamente.")
 
-            carga_final = nova_carga_horaria if nova_carga_horaria is not None else curso_encontrado.carga_horaria
-            ementa_final = nova_ementa if nova_ementa is not None else curso_encontrado.ementa
+        # Atualiza apenas a ementa caso fornecida isoladamente.
+        if nova_ementa is not None and nova_carga_horaria is None:
+            curso_encontrado.ementa = nova_ementa
 
-            # Validação interna se existem turmas abertas antes de efetivar a mudança através do metodo do mínimo.
-            curso_encontrado.alterar_carga_horaria(carga_final, ementa_final)
+        # Atualiza ambos caso a carga horária seja informada (com a ementa obrigatória).
+        if nova_carga_horaria is not None and nova_ementa is not None:
+            curso_encontrado.alterar_carga_horaria(nova_carga_horaria, nova_ementa)
 
         print(f"Dados do curso '{curso_encontrado.nome}' atualizados com sucesso!")
 
