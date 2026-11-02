@@ -1,0 +1,18 @@
+# Ambientes virtuais
+.venv/
+venv/
+ENV/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ferramentas de teste e IDEs
+.pytest_cache/
+.idea/
+.vscode/
+
+# Banco de dados local / JSONs gerados em runtime
+data/*
+!data/settings.json
