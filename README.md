@@ -352,25 +352,25 @@ python -m pytest -v
 
 ### Matriz de Cobertura dos Casos de Teste ($20$ Cenários)
 
-| ID | Caso de Teste | Regra de Negócio / Requisito Validado |
-| :--- | :--- | :--- |
-| **01** | `test_01_cadastro_graduacao_curso_e_vinculo_grade` | Cadastro de graduação e curso, geração de código automático, soma de carga horária e `__str__`. |
-| **02** | `test_02_impedir_ciclo_dependencia_pre_requisitos` | Bloqueio de ciclo direto de dependência entre disciplinas ($A \leftrightarrow B$). |
-| **03** | `test_03_validacao_cpf_invalido_e_duplicidade_aluno` | Rejeição de CPFs matematicamente inválidos e bloqueio de CPF duplicado. |
-| **04** | `test_04_matricula_sucesso_e_vinculo_historico` | Matrícula regular e vínculo bidirecional em `turma.matriculas_ativas` e `aluno.historico`. |
-| **05** | `test_05_matricula_negada_pre_requisito_nao_atendido` | Matrícula negada quando o aluno não possui aprovação prévia no pré-requisito. |
-| **06** | `test_06_matricula_permitida_apos_cumprir_pre_requisito` | Liberação de matrícula na disciplina avançada após aprovação consolidada no pré-requisito. |
-| **07** | `test_07_matricula_negada_choque_horario` | Detecção e bloqueio de choque de dias/horários entre turmas ativas do aluno. |
-| **08** | `test_08_matricula_negada_turma_lotada` | Bloqueio de matrícula quando a ocupação atinge a capacidade máxima de vagas da turma. |
-| **09** | `test_09_matricula_negada_turma_fechada` | Impedimento de matrícula em turmas com status `"Fechada"`. |
-| **10** | `test_10_matricula_negada_limite_maximo_turmas_simultaneas` | Bloqueio quando o aluno atinge o teto `max_turmas_por_aluno` parametrizado. |
-| **11** | `test_11_lancamento_notas_frequencia_e_aprovacao` | Cálculo automático da Média Final (`MF`), percentual de presença e consolidação como `"Aprovado"`. |
-| **12** | `test_12_reprovacao_por_nota_e_por_frequencia` | Consolidação exata de `"Reprovado por Nota"`, `"Reprovado por Falta"` e `"Reprovado por Falta e por Nota"`. |
-| **13** | `test_13_trancamento_matricula_dentro_e_fora_do_prazo` | Liberação de vaga ao trancar dentro do prazo e bloqueio após `data_limite_trancamento`. |
-| **14** | `test_14_calculo_cr_media_ponderada_e_ordenacao_lt` | Cálculo do CR ponderado por carga horária e ordenação de alunos via método especial `__lt__`. |
-| **15** | `test_15_relatorio_alunos_turma_e_ocupacao` | Emissão do relatório de ocupação da turma e listagem de alunos inscritos. |
-| **16** | `test_16_relatorio_distribuicao_notas_e_taxa_aprovacao` | Cálculo estatístico de média, mediana, desvio padrão e taxa de aprovação global/por curso. |
-| **17** | `test_17_relatorio_alunos_risco_e_top_n_periodo` | Identificação preventiva de alunos em zona de risco e geração do ranking Top N no semestre. |
-| **18** | `test_18_atualizacao_parcial_crud_e_regra_carga_horaria_ementa` | Atualização parcial de dados e exigência de nova ementa ao alterar a carga horária do curso. |
-| **19** | `test_19_soft_delete_inativacoes_e_travas_seguranca` | Travas de segurança contra órfãos e execução completa do *Soft Delete* (`ativo = False`). |
-| **20** | `test_20_persistencia_json_salvar_e_carregar_estado` | Serialização e reconstrução integral de objetos, pré-requisitos, notas e frequências via JSON. |
+| ID     | Caso de Teste                                                   | Regra de Negócio / Requisito Validado                                                                       |
+|:-------|:----------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------|
+| **01** | `test_01_cadastro_graduacao_curso_e_vinculo_grade`              | Cadastro de graduação e curso, geração de código automático, soma de carga horária e `__str__`.             |
+| **02** | `test_02_impedir_ciclo_dependencia_pre_requisitos`              | Bloqueio de ciclo direto de dependência entre disciplinas ($A \leftrightarrow B$).                          |
+| **03** | `test_03_validacao_cpf_invalido_e_duplicidade_aluno`            | Rejeição de CPFs matematicamente inválidos e bloqueio de CPF duplicado.                                     |
+| **04** | `test_04_matricula_sucesso_e_vinculo_historico`                 | Matrícula regular e vínculo bidirecional em `turma.matriculas_ativas` e `aluno.historico`.                  |
+| **05** | `test_05_matricula_negada_pre_requisito_nao_atendido`           | Matrícula negada quando o aluno não possui aprovação prévia no pré-requisito.                               |
+| **06** | `test_06_matricula_permitida_apos_cumprir_pre_requisito`        | Liberação de matrícula na disciplina avançada após aprovação consolidada no pré-requisito.                  |
+| **07** | `test_07_matricula_negada_choque_horario`                       | Detecção e bloqueio de choque de dias/horários entre turmas ativas do aluno.                                |
+| **08** | `test_08_matricula_negada_turma_lotada`                         | Bloqueio de matrícula quando a ocupação atinge a capacidade máxima de vagas da turma.                       |
+| **09** | `test_09_matricula_negada_turma_fechada`                        | Impedimento de matrícula em turmas com status `"Fechada"`.                                                  |
+| **10** | `test_10_matricula_negada_limite_maximo_turmas_simultaneas`     | Bloqueio quando o aluno atinge o teto `max_turmas_por_aluno` parametrizado.                                 |
+| **11** | `test_11_lancamento_notas_frequencia_e_aprovacao`               | Cálculo automático da Média Final (`MF`), percentual de presença e consolidação como `"Aprovado"`.          |
+| **12** | `test_12_reprovacao_por_nota_e_por_frequencia`                  | Consolidação exata de `"Reprovado por Nota"`, `"Reprovado por Falta"` e `"Reprovado por Falta e por Nota"`. |
+| **13** | `test_13_trancamento_matricula_dentro_e_fora_do_prazo`          | Liberação de vaga ao trancar dentro do prazo e bloqueio após `data_limite_trancamento`.                     |
+| **14** | `test_14_calculo_cr_media_ponderada_e_ordenacao_lt`             | Cálculo do CR ponderado por carga horária e ordenação de alunos via método especial `__lt__`.               |
+| **15** | `test_15_relatorio_alunos_turma_e_ocupacao`                     | Emissão do relatório de ocupação da turma e listagem de alunos inscritos.                                   |
+| **16** | `test_16_relatorio_distribuicao_notas_e_taxa_aprovacao`         | Cálculo estatístico de média, mediana, desvio padrão e taxa de aprovação global/por curso.                  |
+| **17** | `test_17_relatorio_alunos_risco_e_top_n_periodo`                | Identificação preventiva de alunos em zona de risco e geração do ranking Top N no semestre.                 |
+| **18** | `test_18_atualizacao_parcial_crud_e_regra_carga_horaria_ementa` | Atualização parcial de dados e exigência de nova ementa ao alterar a carga horária do curso.                |
+| **19** | `test_19_soft_delete_inativacoes_e_travas_seguranca`            | Travas de segurança contra órfãos e execução completa do *Soft Delete* (`ativo = False`).                   |
+| **20** | `test_20_persistencia_json_salvar_e_carregar_estado`            | Serialização e reconstrução integral de objetos, pré-requisitos, notas e frequências via JSON.              |
