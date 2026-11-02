@@ -154,3 +154,9 @@ class Turma(Oferta):
 
         # Retorna verdadeiro se houver conflito, falso caso contrário (avaliando diretamente a existência de itens).
         return bool(horarios_comuns)
+
+
+    def __len__(self) -> int:
+        """Retorna a quantidade de matrículas ativas na turma (ocupação atual)."""
+
+        return len(self._matriculas_ativas)

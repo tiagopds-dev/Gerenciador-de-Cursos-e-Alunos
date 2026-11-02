@@ -236,3 +236,11 @@ class Matricula:
         # Remove o aluno da lista de matrículas ativas da turma de forma segura.
         if self in self.turma.matriculas_ativas:
             self.turma.matriculas_ativas.remove(self)
+
+    def __eq__(self, other: object) -> bool:
+        """Compara duas matrículas pela combinação única de Aluno e Turma."""
+
+        if other.__class__.__name__ != "Matricula":
+            return NotImplemented
+
+        return self.aluno.matricula == other.aluno.matricula and self.turma.id_turma == other.turma.id_turma
