@@ -84,7 +84,7 @@ class RepositorioCurso:
                     graduacao_encontrada = graduacao
                     break
 
-            # Trava de segurança para satisfazer a tipagem estrita e proteger a integridade dos dados.
+            # Garante a integridade referencial caso a chave estrangeira não seja encontrada.
             if graduacao_encontrada is None:
                 raise ValueError(
                     f"Corrupção de dados: A graduação '{curso_dict['graduacao_codigo']}' "
@@ -111,8 +111,7 @@ class RepositorioCurso:
 
             cursos_reconstruidos.append(novo_curso)
 
-        # Passagem 2: Hidratação da árvore de pré-requisitos (associação Curso com Curso).
-        # A função zip emparelha o dicionário (que tem os códigos) com o objeto recém-criado na memória.
+        # Associa os códigos de pré-requisitos salvos aos respectivos objetos Curso em memória.
         for curso_dict, curso_obj in zip(cursos_importacao, cursos_reconstruidos):
 
             for codigo_prereq in curso_dict["pre_requisitos_codigos"]:

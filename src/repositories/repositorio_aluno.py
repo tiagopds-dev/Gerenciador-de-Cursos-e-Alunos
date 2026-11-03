@@ -25,7 +25,7 @@ class RepositorioAluno:
         armazenando o contador global da classe e omitindo o histórico de matrículas.
         """
 
-        # Cria uma lista isolada para satisfazer o analisador estático de tipos.
+        # Inicializa a lista de dicionários serializados.
         lista_dados = []
 
         for aluno in alunos:
@@ -99,7 +99,7 @@ class RepositorioAluno:
                     graduacao_encontrada = graduacao
                     break
 
-            # Trava de segurança para satisfazer a tipagem estrita e proteger a integridade dos dados.
+            # Garante a integridade referencial caso a chave estrangeira não seja encontrada.
             if graduacao_encontrada is None:
                 raise ValueError(
                     f"Corrupção de dados: A graduação '{aluno_dict['graduacao_codigo']}' "
@@ -115,7 +115,7 @@ class RepositorioAluno:
                 graduacao_encontrada
             )
 
-            # Fura o encapsulamento de forma controlada para restaurar a matrícula exata e o status de atividade.
+            # Restaura o identificador original e o status de atividade a partir do registro persistido.
             novo_aluno._matricula = aluno_dict["matricula"]
 
             novo_aluno.ativo = aluno_dict.get("ativo", True)

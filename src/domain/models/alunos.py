@@ -62,8 +62,7 @@ class Aluno(Pessoa):
     @graduacao.setter
     def graduacao(self, nova_graduacao: "Graduacao"):
 
-        # Verifica se o objeto passado realmente pertence à classe Graduacao.
-        # (Substitui o isinstance para evitar erro com o TYPE_CHECKING em execução real).
+        # Verifica se o objeto atribuído pertence à classe Graduacao.
         if nova_graduacao.__class__.__name__ != "Graduacao":
             raise TypeError("A graduação deve ser um objeto válido da classe 'Graduacao'!")
 
@@ -71,8 +70,6 @@ class Aluno(Pessoa):
         self._graduacao = nova_graduacao
 
 
-    # Usa o decorador para garantir que o Coeficiente não fique desatualizado, fique blindado contra edição,
-    # e tenha uma sintaxe de utilização limpa.
     @property
     def cr(self) -> float:
         """Calcula o coeficiente de rendimento/média ponderada com base nas disciplinas concluídas."""
@@ -100,7 +97,6 @@ class Aluno(Pessoa):
         return round(cr, 2)
 
 
-    # Adicionado Type Hinting na assinatura ('Aluno').
     def __lt__(self, other: "Aluno") -> bool:
         """
         Método especial que possibilita a comparação e, consequentemente, a ordenação de CRs.

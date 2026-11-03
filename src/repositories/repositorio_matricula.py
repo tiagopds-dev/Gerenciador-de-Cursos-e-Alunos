@@ -87,7 +87,7 @@ class RepositorioMatricula:
                     turma_encontrada = turma
                     break
 
-            # Travas de segurança para satisfazer a tipagem estrita e proteger a integridade.
+            # Garante a integridade referencial caso a chave estrangeira não seja encontrada.
             if aluno_encontrado is None:
                 raise ValueError(
                     f"Corrupção de dados: O aluno com matrícula '{matricula_dict['aluno_matricula']}' "

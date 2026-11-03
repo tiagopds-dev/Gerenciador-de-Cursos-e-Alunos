@@ -538,7 +538,7 @@ def test_17_relatorio_alunos_risco_e_top_n_periodo(
     sistema_limpo.cadastrar_graduacao("12345678", "Engenharia de Software", 8)
     grad = sistema_limpo.graduacoes[0]
 
-    sistema_limpo.cadastrar_curso(" Interação Humano Computador", 60, [], EMENTA_PADRAO, grad)
+    sistema_limpo.cadastrar_curso("Interação Humano Computador", 60, [], EMENTA_PADRAO, grad)
     sistema_limpo.abrir_turma(periodo, {"qui": "08:00-10:00"}, 15, "Sala IHC", sistema_limpo.cursos[0])
     turma = sistema_limpo.turmas[0]
 
@@ -574,9 +574,7 @@ def test_17_relatorio_alunos_risco_e_top_n_periodo(
     assert "2º LUGAR: Diêgo Carvalho" in saida_top
 
 
-# -------------------------------------------------------------------------
-# 5. Testes de Atualização (UPDATE), Soft Delete e Persistência em JSON
-# -------------------------------------------------------------------------
+# Testes de Atualização (UPDATE), Soft Delete e Persistência em JSON
 
 def test_18_atualizacao_parcial_crud_e_regra_carga_horaria_ementa(sistema_limpo: Sistema) -> None:
     """Testa atualizações parciais de entidades e a proibição de alterar carga horária sem ementa."""

@@ -25,7 +25,7 @@ class RepositorioTurma:
         armazenando também o contador global da classe para evitar reinicialização.
         """
 
-        # Cria uma lista isolada para satisfazer o analisador estático de tipos.
+        # Inicializa a lista de dicionários serializados.
         lista_dados = []
 
         for turma in turmas:
@@ -100,7 +100,7 @@ class RepositorioTurma:
                     curso_encontrado = curso
                     break
 
-            # Trava de segurança para satisfazer a tipagem estrita e proteger a integridade.
+            # Garante a integridade referencial caso a chave estrangeira não seja encontrada.
             if curso_encontrado is None:
                 raise ValueError(
                     f"Corrupção de dados: O curso '{turma_dict['curso_codigo']}' "
@@ -116,7 +116,7 @@ class RepositorioTurma:
                 curso_encontrado
             )
 
-            # Fura o encapsulamento de forma controlada para restaurar o ID exato, o status e a atividade.
+            # Restaura o identificador original e o status de atividade a partir do registro persistido.
             nova_turma._id_turma = turma_dict["id_turma"]
 
             nova_turma.status = turma_dict["status"]

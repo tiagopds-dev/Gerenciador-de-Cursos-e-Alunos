@@ -38,7 +38,7 @@ def carregar_configuracao(caminho_settings: str = "data/settings.json") -> Confi
         with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
             json.dump(dados_padrao, arquivo, indent=4, ensure_ascii=False)
 
-    # Instancia Configuracao passando o caminho textual conforme definido em config.py.
+    # Instancia e retorna o objeto de configuração a partir do arquivo JSON.
     return Configuracao(str(caminho_arquivo))
 
 
@@ -87,7 +87,7 @@ def executar_seed(sistema: Sistema) -> None:
     ano_atual = date.today().year
     periodo_exemplo = f"{ano_atual}.2"
 
-    # Cadastra Graduação e garante a tipagem para o analisador estático.
+    # Cadastra a Graduação inicial.
     sistema.cadastrar_graduacao("12345678", "Engenharia de Software", 8)
     grad_es = sistema.buscar_graduacao("12345678")
 

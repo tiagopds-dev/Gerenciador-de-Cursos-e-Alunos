@@ -119,7 +119,6 @@ class Graduacao:
         self._ativo = novo_status
 
 
-    # O uso de 'Curso' em formato de string (Forward Reference) na tipagem protege a IDE.
     def adicionar_disciplina(self, disciplina: "Curso") -> None:
         """Insere um novo objeto Curso na lista da grade curricular."""
 

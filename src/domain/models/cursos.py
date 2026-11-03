@@ -176,7 +176,7 @@ class Curso:
         if isinstance(nova_carga_horaria, bool) or not isinstance(nova_carga_horaria, int):
             raise TypeError("A nova carga horária deve ser informada como número inteiro!")
 
-        # Verifica utilizando o gerador any() se há alguma turma ativa cuja situação seja 'Aberta'.
+        # Impede a alteração caso exista alguma turma ativa e aberta para esta disciplina.
         if any(turma.status == "Aberta" and turma.ativo for turma in self.turmas_ofertadas):
             raise ValueError(
                 f"Operação negada! Não é possível alterar a base do curso '{self.nome}' enquanto há turmas ativas."
@@ -211,11 +211,7 @@ class Curso:
 
 
     def vincular_turma(self, turma: "Turma") -> None:
-        """
-        Aplica o princípio do encapsulamento.
-        Permite que uma Turma se registe no histórico deste Curso de forma segura,
-        sem que seja necessário expor ou aceder ao atributo protegido '_turmas_ofertadas' diretamente.
-        """
+        """Registra uma nova turma ofertada no histórico da disciplina de forma encapsulada."""
 
         if turma.__class__.__name__ != "Turma":
             raise TypeError("Apenas objetos da classe 'Turma' podem ser vinculados ao curso!")
