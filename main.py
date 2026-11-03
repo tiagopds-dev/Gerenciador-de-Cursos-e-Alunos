@@ -378,7 +378,7 @@ def main() -> None:
                 if obj:
                     print(
                         f"Turma {obj.id_turma} | Curso: {obj.curso.nome} | Período: {obj.periodo} | "
-                        f"Status: {obj.status} | Vagas: {len(obj.matriculas_ativas)}/{obj.vagas}"
+                        f"Status: {obj.status} | Vagas: {len(obj)}/{obj.vagas}"
                     )
             elif args.entidade == "graduacao":
                 obj = sistema.buscar_graduacao(args.identificador)
@@ -399,7 +399,7 @@ def main() -> None:
                 for t in [x for x in sistema.turmas if x.ativo]:
                     print(
                         f"[{t.id_turma}] {t.curso.nome} | {t.periodo} | "
-                        f"{t.status} | Ocupação: {len(t.matriculas_ativas)}/{t.vagas}"
+                        f"{t.status} | Ocupação: {len(t)}/{t.vagas}"
                     )
             elif args.entidade == "alunos":
                 for a in [x for x in sistema.alunos if x.ativo]:

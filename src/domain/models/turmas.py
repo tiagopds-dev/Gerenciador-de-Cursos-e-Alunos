@@ -100,7 +100,7 @@ class Turma(Oferta):
             raise ValueError(f"A turma '{self.id_turma}' já se encontra Aberta!")
 
         # Barra a alteração de condição caso a turma já esteja fechada e cheia.
-        if self.status == "Fechada" and len(self.matriculas_ativas) >= self.vagas:
+        if self.status == "Fechada" and len(self) >= self.vagas:
             raise ValueError(
                 f"Não é possível reabrir a turma '{self.id_turma}': o limite de {self.vagas} vagas já foi atingido!"
             )
@@ -127,9 +127,9 @@ class Turma(Oferta):
             raise ValueError(f"A turma '{self.id_turma}' já se encontra Fechada!")
 
         # Barra a alteração de condição caso o número mínimo de matrículas ativas não tenha sido atingido.
-        if len(self.matriculas_ativas) < 5:
+        if len(self) < 5:
             raise ValueError(
-                f"A turma '{self.id_turma}' não atingiu o quórum mínimo de 5 alunos (Atuais: {len(self.matriculas_ativas)})!"
+                f"A turma '{self.id_turma}' não atingiu o quórum mínimo de 5 alunos (Atuais: {len(self)})!"
             )
 
         # Impede o fechamento se houver matrículas não consolidadas.

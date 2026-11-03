@@ -150,8 +150,9 @@ def test_04_matricula_sucesso_e_vinculo_historico(sistema_limpo: Sistema) -> Non
 
     sistema_limpo.realizar_matricula(aluno, turma)
 
-    assert len(turma.matriculas_ativas) == 1
+    assert len(turma) == 1
     assert len(aluno.historico) == 1
+    assert aluno.historico[0] == turma.matriculas_ativas[0]
     assert aluno.historico[0].status == "Cursando"
 
 
@@ -409,12 +410,12 @@ def test_13_trancamento_matricula_dentro_e_fora_do_prazo(sistema_limpo: Sistema)
 
     sistema_limpo.realizar_matricula(aluno_ok, turma)
     sistema_limpo.realizar_matricula(aluno_atrasado, turma)
-    assert len(turma.matriculas_ativas) == 2
+    assert len(turma) == 2
 
     # Trancamento dentro do prazo válido deve liberar a vaga na turma.
     sistema_limpo.trancar_matricula_aluno(aluno_ok.cpf, turma.id_turma)
     assert aluno_ok.historico[0].status == "Trancada"
-    assert len(turma.matriculas_ativas) == 1
+    assert len(turma) == 1
 
     # Simula expiração da data-limite de trancamento para ontem.
     sistema_limpo.configuracao._data_limite_trancamento = date.today() - timedelta(days=1)

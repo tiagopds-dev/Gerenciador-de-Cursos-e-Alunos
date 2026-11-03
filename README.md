@@ -96,6 +96,7 @@ classDiagram
         +abrir_turma(configuracao) None
         +fechar_turma() None
         +verificar_choque_horario(outra_turma) bool
+        +__len__() int
     }
 
     class Graduacao {
@@ -134,6 +135,7 @@ classDiagram
         +lancar_frequencia(horas) None
         +atualizar_situacao(regras) None
         +trancar_matricula(regras) None
+        +__eq__(other) bool
     }
 
     class Configuracao {

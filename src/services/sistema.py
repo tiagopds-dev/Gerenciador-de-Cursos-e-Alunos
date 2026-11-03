@@ -179,7 +179,7 @@ class Sistema:
             )
 
         # Verifica a disponibilidade de vagas comparando matrículas ativas na turma com o seu limite máximo.
-        if len(turma.matriculas_ativas) >= turma.vagas:
+        if len(turma) >= turma.vagas:
             raise ValueError(f"A turma '{turma.id_turma}' já atingiu o limite máximo de {turma.vagas} vagas!")
 
         # Extrai de forma rápida todas as turmas que o aluno já está cursando atualmente.
@@ -395,7 +395,7 @@ class Sistema:
         if novas_vagas is not None:
 
             # Impede que a redução de capacidade deixe a turma com menos vagas do que alunos já inscritos.
-            ocupacao_atual = len(turma_encontrada.matriculas_ativas)
+            ocupacao_atual = len(turma_encontrada)
 
             if novas_vagas < ocupacao_atual:
                 raise ValueError(
@@ -722,10 +722,10 @@ class Sistema:
             raise ValueError(f"Encerramento negado: Turma '{id_turma}' não encontrada ou inativa!")
 
         # Verifica o quórum mínimo antes de consolidar as situações para não alterar status em caso de falha.
-        if len(turma_encontrada.matriculas_ativas) < 5:
+        if len(turma_encontrada) < 5:
             raise ValueError(
                 f"A turma '{turma_encontrada.id_turma}' não atingiu o quórum mínimo de 5 alunos "
-                f"(Atuais: {len(turma_encontrada.matriculas_ativas)})!"
+                f"(Atuais: {len(turma_encontrada)})!"
             )
 
         # Consolida aprovações e reprovações e, em seguida, fecha a turma.
@@ -772,7 +772,7 @@ class Sistema:
             raise ValueError(f"Relatório negado: Turma '{id_turma}' não encontrada ou inativa!")
 
         capacidade_total = turma_encontrada.vagas
-        vagas_ocupadas = len(turma_encontrada.matriculas_ativas)
+        vagas_ocupadas = len(turma_encontrada)
 
         # Medida de segurança contra divisão por zero.
         porcentagem_lotacao = (vagas_ocupadas / capacidade_total) * 100 if capacidade_total > 0 else 0
