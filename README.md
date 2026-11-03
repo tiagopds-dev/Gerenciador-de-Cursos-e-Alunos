@@ -23,12 +23,10 @@ O projeto está organizado segundo os princípios de separação de responsabili
 ```text
 Gerenciador-de-Cursos-e-Alunos/
 ├── data/
-│   ├── settings.json                # Parâmetros globais e regras de negócio
-│   ├── graduacoes.json              # Persistência de graduações
-│   ├── cursos.json                  # Persistência do catálogo de disciplinas
-│   ├── turmas.json                  # Persistência de ofertas e metadados de IDs
-│   ├── alunos.json                  # Persistência de alunos e metadados de matrículas
-│   └── matriculas.json              # Persistência de vínculos, notas e frequência
+│   └── settings.json                # Parâmetros globais e regras de negócio
+├── docs/
+│   ├── diagrama_uml.png             # Diagrama de classes UML em alta resolução
+│   └── especificacao_projeto.pdf    # Especificação oficial do projeto (UFCA)
 ├── src/
 │   ├── config/
 │   │   └── config.py                # Classe Configuracao (leitura e validação do settings.json)
@@ -60,6 +58,8 @@ Gerenciador-de-Cursos-e-Alunos/
 ## 3. Diagrama UML Final
 
 O diagrama abaixo representa a arquitetura completa das classes de domínio, configuração e orquestração do sistema:
+
+![Diagrama de Classes UML](docs/diagrama_uml.png)
 
 ```mermaid
 classDiagram
