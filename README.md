@@ -265,13 +265,23 @@ O arquivo `data/settings.json` parametriza as regras globais da instituição (e
 
 Execute os comandos abaixo a partir da raiz do projeto:
 
-#### 1. Popular o Sistema com Dados de Demonstração (`seed`)
+#### 1. Consultar a Lista de Funcionalidades Disponíveis (`--help`)
+Para visualizar no terminal todos os subcomandos disponíveis na aplicação ou consultar os argumentos exigidos por uma funcionalidade específica, utilize a flag `--help` (ou `-h`):
+```bash
+# Exibe a lista geral de todos os subcomandos disponíveis no sistema
+python main.py --help
+
+# Exibe os parâmetros detalhados de um subcomando específico (ex: abrir-turma, relatorio)
+python main.py abrir-turma --help
+python main.py relatorio --help
+```
+#### 2. Popular o Sistema com Dados de Demonstração (`seed`)
 Cria automaticamente uma graduação, disciplinas encadeadas por pré-requisito, turmas, alunos com CPFs válidos, matrículas e lançamentos iniciais:
 ```bash
 python main.py seed
 ```
 
-#### 2. Cadastros (`cadastrar-graduacao`, `cadastrar-curso`, `abrir-turma`, `cadastrar-aluno`)
+#### 3. Cadastros (`cadastrar-graduacao`, `cadastrar-curso`, `abrir-turma`, `cadastrar-aluno`)
 ```bash
 # Cadastrar uma nova graduação
 python main.py cadastrar-graduacao --codigo-mec 87654321 --nome "Ciência da Computação" --semestres 8
@@ -286,7 +296,7 @@ python main.py abrir-turma --curso ES0001 --periodo 2026.2 --horarios "seg=14:00
 python main.py cadastrar-aluno --nome "Gabriel Santos" --cpf 39053344705 --telefone 88999991111 --email gabriel.santos@ufca.edu.br --graduacao 12345678
 ```
 
-#### 3. Matrícula e Acompanhamento Acadêmico
+#### 4. Matrícula e Acompanhamento Acadêmico
 ```bash
 # Matricular aluno em uma turma aberta
 python main.py matricular --aluno 39053344705 --turma 2026201
@@ -303,7 +313,7 @@ python main.py trancar-matricula --aluno 39053344705 --turma 2026201
 python main.py encerrar-turma --turma 2026201
 ```
 
-#### 4. Consultas, Listagens, Atualizações e Inativações (*Soft Delete*)
+#### 5. Consultas, Listagens, Atualizações e Inativações (*Soft Delete*)
 ```bash
 # Listar registros ativos por categoria (graduacoes | cursos | turmas | alunos)
 python main.py listar cursos
@@ -322,7 +332,7 @@ python main.py atualizar-turma --turma 2026201 --local "Laboratório 04" --vagas
 python main.py inativar turma 2026202
 ```
 
-#### 5. Geração de Relatórios Acadêmicos (`relatorio`)
+#### 6. Geração de Relatórios Acadêmicos (`relatorio`)
 ```bash
 # 1. Lista de alunos por turma e ocupação de vagas
 python main.py relatorio alunos-turma --turma 2026201
@@ -342,7 +352,7 @@ python main.py relatorio top-n --periodo 2026.2
 
 ---
 
-## 6. Testes Automatizados e Cobertura (`pytest`)
+## 7. Testes Automatizados e Cobertura (`pytest`)
 
 A suíte de testes localizada em `tests/test_sistema.py` utiliza as fixtures `tmp_path` e `monkeypatch` do `pytest` para criar um ambiente de execução 100% isolado em diretório temporário, garantindo que os arquivos reais da pasta `data/` nunca sejam modificados durante os testes.
 
